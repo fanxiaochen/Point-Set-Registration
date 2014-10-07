@@ -5,18 +5,17 @@ set( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
 if( NOT EIGEN3_INCLUDE_DIR )
     message( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation." )
 endif()
-include_directories(EIGEN3_INCLUDE_DIR)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(inc_base include/Base)
 set(src_base src/Base)
 
 set(incs_base 	${inc_base}/vector.h
-				${inc_base}/vector2.h
-				${inc_base}/vector3.h)
+				${inc_base}/matrix.h)
 		 
-set(srcs_base 	${src_base}/vector.cpp
-				${src_base}/vector2.cpp
-				${src_base}/vector3.cpp)
+set(srcs_base 	${src_base}/vector.cpp)
 				
 set(incs 		${incs_base})
 set(srcs		${srcs_base})
