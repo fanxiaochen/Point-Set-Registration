@@ -10,9 +10,7 @@ namespace cpd
 		CPDBase();
 		virtual ~CPDBase();
 
-		void setInputData(const T& model, const T& data);
-		inline T& getModel(){return _model;}
-		inline T& getData(){return _data;}
+		void setInputData(T* const model, T* const data);
 		
 		void apply();
 		virtual void intialization() = 0;
@@ -20,8 +18,8 @@ namespace cpd
 		virtual void align() = 0;
 
 	private:
-		T _model;
-		T _data;
+		T* _model;
+		T* _data;
 	};
 }
 

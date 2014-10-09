@@ -9,7 +9,7 @@ namespace cpd
 	CPDBase<T>::~CPDBase(){}
 
 	template <class T>
-	void CPDBase<T>::setInputData(const T& model, const T& data)
+	void CPDBase<T>::setInputData(T* const model, T* const data)
 	{
 		_model = model;
 		_data = data;

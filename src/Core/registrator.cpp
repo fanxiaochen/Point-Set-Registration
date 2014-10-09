@@ -45,24 +45,30 @@ namespace cpd
 		else if (_type == NONRIGID)
 			nonrigid();
 		else
-			std::cout << "Please check your registration setting!" << std::endl;
+			std::cout << "Please check your registration type setting!" << std::endl;
 	}
 
 	template <class T>
 	void Registrator<T>::rigid()
 	{
-
+		CPDRigid cpd;
+		cpd.setInputData(&_model, &_data);
+		cpd.apply();
 	}
 
 	template <class T>
 	void Registrator<T>::affine()
 	{
-
+		CPDAffine cpd;
+		cpd.setInputData(&_model, &_data);
+		cpd.apply();
 	}
 
 	template <class T>
 	void Registrator<T>::nonrigid()
 	{
-
+		CPDNRigid cpd;
+		cpd.setInputData(&_model, &_data);
+		cpd.apply();
 	}
 }
