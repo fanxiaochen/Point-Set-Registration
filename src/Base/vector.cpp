@@ -1,12 +1,12 @@
 #include <iostream>
 #include "Base/vector.h"
 #include "Base/matrix.h"
-#include "Base/types.h"
+#include "Base/data.h"
 
 using namespace Eigen;
 int main()
 {
-	cpd::Matrix2<cpd::value_type> m;
+	cpd::Matrix2<cpd::value_type, 2> m;
 	m(0,0) = 3;
 	m(1,0) = 2.5;
 	m(0,1) = -1;

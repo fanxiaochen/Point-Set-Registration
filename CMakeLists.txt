@@ -16,17 +16,25 @@ set(src_core src/Core)
 
 set(incs_base 	${inc_base}/vector.h
 				${inc_base}/matrix.h
-				${inc_base}/types.h
+				${inc_base}/parameters.h
 				${inc_base}/data.h)
 
 set(incs_core	${inc_core}/em.h
-				${inc_core}/registrator.h)
+				${inc_core}/registrator.h
+				${inc_core}/cpd_base.h
+				${inc_core}/cpd_rigid.h
+				${inc_core}/cpd_affine.h
+				${inc_core}/cpd_nonrigid.h)
 		 
 set(srcs_base 	${src_base}/vector.cpp
 				${src_base}/data.cpp)
 
 set(srcs_core	${src_core}/em.cpp
-				${src_core}/registrator.cpp)
+				${src_core}/registrator.cpp
+				${src_core}/cpd_base.cpp
+				${src_core}/cpd_rigid.cpp
+				${src_core}/cpd_affine.cpp
+				${src_core}/cpd_nonrigid.cpp)
 				
 set(incs 		${incs_base} ${incs_core})
 set(srcs		${srcs_base} ${srcs_core})

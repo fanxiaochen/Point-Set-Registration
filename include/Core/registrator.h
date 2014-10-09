@@ -1,3 +1,8 @@
+#ifndef REGISTRATOR_H
+#define REGISTRATOR_H
+
+#include "Base/data.h"
+#include "Core/cpd_base.h"
 
 namespace cpd
 {
@@ -9,9 +14,10 @@ namespace cpd
 		~Registrator();
 
 		void setInputData(const T& model, const T& data);
+		void setType(RegType type);
 
-		inline T& getModel(){return _model;}
-		inline T& getData(){return _data;}
+		T& getModel();
+		T& getData();
 
 		void getCorrespondences();
 		
@@ -23,7 +29,9 @@ namespace cpd
 		void align();
 
 	private:
-		T	_model;
-		T	_data;
+		CPDBase* _cpd_base;
+		RegType _type;
 	};
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef EM_H
+#define EM_H
+
 #include "Base/matrix.h"
 
 namespace cpd
@@ -17,3 +20,5 @@ namespace cpd
 
 	};
 }
+
+#endif
