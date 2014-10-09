@@ -10,15 +10,26 @@ include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(inc_base include/Base)
+set(inc_core include/Core)
 set(src_base src/Base)
+set(src_core src/Core)
 
 set(incs_base 	${inc_base}/vector.h
-				${inc_base}/matrix.h)
+				${inc_base}/matrix.h
+				${inc_base}/types.h
+				${inc_base}/data.h)
+
+set(incs_core	${inc_core}/em.h
+				${inc_core}/registrator.h)
 		 
-set(srcs_base 	${src_base}/vector.cpp)
+set(srcs_base 	${src_base}/vector.cpp
+				${src_base}/data.cpp)
+
+set(srcs_core	${src_core}/em.cpp
+				${src_core}/registrator.cpp)
 				
-set(incs 		${incs_base})
-set(srcs		${srcs_base})
+set(incs 		${incs_base} ${incs_core})
+set(srcs		${srcs_base} ${srcs_core})
 
 
 #Organize the files
@@ -26,9 +37,14 @@ set(Headers 	"Header Files")
 set(Sources		"Source Files")
 
 set(headfiles_base		${Headers}\\Base)
+set(headfiles_core		${Headers}\\Core)
 set(srcfiles_base		${Sources}\\Base)
+set(srcfiles_core		${Sources}\\Core)
 
 source_group(${headfiles_base} FILES ${incs_base})
+source_group(${headfiles_core} FILES ${incs_core})
+
 source_group(${srcfiles_base} FILES ${srcs_base})
+source_group(${srcfiles_core} FILES ${srcs_core})
 
 add_executable(CPD ${srcs} ${incs})
