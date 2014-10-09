@@ -4,7 +4,7 @@ namespace cpd
 {
 	template <class T>
 	Registrator<T>::Registrator()
-		:_cpd_base(NULL), RegType(0)
+		:RegType(-1)
 	{
 
 	}
@@ -34,38 +34,34 @@ namespace cpd
 	}
 
 	template <class T>
-	T& Registrator<T>::getModel()
-	{
-		return _cpd_base->getModel();
-	}
-
-	template <class T>
-	T& Registrator<T>::getData()
-	{
-		return _cpd_base->getData();
-	}
-
-	template <class T>
 	void Registrator<T>::run()
 	{
-		if (_type == RIGID)
-
+		if (_type == -1)
+			std::cout << "Please set the type of the registration!" << std::endl;
+		else if (_type == RIGID)
+			rigid();
+		else if (_type == AFFINE)
+			affine();
+		else if (_type == NONRIGID)
+			nonrigid();
+		else
+			std::cout << "Please check your registration setting!" << std::endl;
 	}
 
 	template <class T>
-	void Registrator<T>::intialization()
+	void Registrator<T>::rigid()
 	{
 
 	}
 
 	template <class T>
-	void Registrator<T>::em()
+	void Registrator<T>::affine()
 	{
 
 	}
 
 	template <class T>
-	void Registrator<T>::align()
+	void Registrator<T>::nonrigid()
 	{
 
 	}

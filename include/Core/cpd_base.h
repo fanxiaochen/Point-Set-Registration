@@ -14,6 +14,7 @@ namespace cpd
 		inline T& getModel(){return _model;}
 		inline T& getData(){return _data;}
 		
+		void apply();
 		virtual void intialization() = 0;
 		virtual void em() = 0;
 		virtual void align() = 0;

@@ -14,4 +14,12 @@ namespace cpd
 		_model = model;
 		_data = data;
 	}
+
+	template <class T>
+	void CPDBase<T>::apply()
+	{
+		intialization();
+		em();
+		align();
+	}
 }
