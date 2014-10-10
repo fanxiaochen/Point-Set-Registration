@@ -1,5 +1,5 @@
-#ifndef CPD_BASE_H
-#define CPD_BASE_H
+#ifndef CPD_BASE_HPP
+#define CPD_BASE_HPP
 
 namespace cpd
 {

@@ -1,5 +1,5 @@
-#ifndef PARAMETERS_H
-#define PARAMETERS_H
+#ifndef PARAMETERS_HPP
+#define PARAMETERS_HPP
 
 namespace cpd
 {

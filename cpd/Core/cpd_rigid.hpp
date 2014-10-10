@@ -1,5 +1,5 @@
-#ifndef CPD_RIGID_H
-#define CPD_RIGID_H
+#ifndef CPD_RIGID_HPP
+#define CPD_RIGID_HPP
 
 namespace cpd
 {

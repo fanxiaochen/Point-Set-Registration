@@ -1,12 +1,12 @@
-#ifndef DATA_H
-#define DATA_H
+#ifndef DATA_HPP
+#define DATA_HPP
 
 #include <string>
 #include "Base/matrix.hpp"
 
 namespace cpd
 {
-	typedef enum {RIGID, AFFINE, NONRIGID} RegType;
+	typedef enum {EMPTY, RIGID, AFFINE, NONRIGID} RegType;
 
 	typedef float value_type;
 

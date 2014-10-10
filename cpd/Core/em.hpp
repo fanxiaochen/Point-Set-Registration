@@ -1,5 +1,5 @@
-#ifndef EM_H
-#define EM_H
+#ifndef EM_HPP
+#define EM_HPP
 
 #include "Base/matrix.h"
 

@@ -42,7 +42,7 @@ namespace cpd
 {
 	template <class T>
 	Registrator<T>::Registrator()
-		:RegType(-1)
+		:_type(EMPTY)
 	{
 
 	}

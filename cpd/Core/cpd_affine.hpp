@@ -1,5 +1,5 @@
-#ifndef CPD_AFFINE_H
-#define CPD_AFFINE_H
+#ifndef CPD_AFFINE_HPP
+#define CPD_AFFINE_HPP
 
 namespace cpd
 {
