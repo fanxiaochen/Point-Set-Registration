@@ -1,5 +1,5 @@
-#ifndef REGISTRATOR_H
-#define REGISTRATOR_H
+#ifndef REGISTRATOR_HPP
+#define REGISTRATOR_HPP
 
 #include "Base/data.hpp"
 
@@ -80,7 +80,7 @@ namespace cpd
 	template <class T>
 	void Registrator<T>::run()
 	{
-		if (_type == -1)
+		if (_type == EMPTY)
 			std::cout << "Please set the type of the registration!" << std::endl;
 		else if (_type == RIGID)
 			rigid();

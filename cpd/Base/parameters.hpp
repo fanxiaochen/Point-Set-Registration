@@ -19,7 +19,6 @@ namespace cpd
 		T2 _t;
 		value_type _squared_sigma;
 	};
-
 }
 
 #endif

@@ -12,14 +12,6 @@ namespace cpd
 		CPDRigid();
 		virtual ~CPDRigid();
 		void apply();
-
-	private:
-		void intialization();
-		void em();
-		void align();
-
-	private:
-
 	};
 }
 
@@ -31,27 +23,31 @@ namespace cpd
 	template <class T>
 	CPDRigid<T>::~CPDRigid(){}
 
-	template<class T>
+	template <class T>
 	void CPDRigid<T>::apply()
 	{
-		std::cout << sizeof(T) << std::endl;
-	}
+		Matrix3<value_type> mat;
+		mat.rows();
 
-	template<class T>
-	void CPDRigid<T>::intialization()
-	{
 
-	}
+		size_t model_rows = _model->rows();
+		size_t model_cols = _model->cols();
 
-	template<class T>
-	void CPDRigid<T>::em()
-	{
+		size_t data_rows = _data->rows();
+		size_t data_cols = _data->cols();
 
-	}
+		if (model_cols != data_cols)
+		{
+			std::cout << "the model and data are not in the same dimension!" << std::endl;
+			return;
+		}
 
-	template<class T>
-	void CPDRigid<T>::align()
-	{
+		const int R_m = model_cols;
+		const int R_n = data_cols;
+		const int m = 3; const int n = 3;
+		Matrix3<value_type> R;
+		
+
 
 	}
 }

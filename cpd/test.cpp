@@ -8,7 +8,7 @@
 
 int main()
 {
-	cpd::Matrix2<cpd::value_type, 2> m;
+	cpd::Matrix2<cpd::value_type> m;
 	m(0,0) = 3;
 	m(1,0) = 2.5;
 	m(0,1) = -1;
@@ -19,11 +19,12 @@ int main()
 	v(1) = v(0) - 1;
 	std::cout << "Here is the vector v:\n" << v << std::endl;
 
-	cpd::Matrix2<cpd::value_type, 2> mat;
-	cpd::Registrator<cpd::Matrix2<cpd::value_type, 2> > reg;
+	cpd::Matrix2<cpd::value_type> mat;
+	cpd::Registrator<cpd::Matrix2<cpd::value_type> > reg;
 	reg.getCorrespondences();
 	mat = reg.getData();
 
-	cpd::CPDRigid<double >* cpd_base = new cpd::CPDRigid<double>;
+	cpd::CPDRigid<cpd::Matrix3<cpd::value_type> >* cpd_base = new cpd::CPDRigid<cpd::Matrix3<cpd::value_type> >;
 	cpd_base->apply();
+
 }

@@ -13,12 +13,12 @@ namespace cpd
 		void setInputData(T* const model, T* const data);
 		virtual void apply() = 0;
 
-	private:
+	/*private:
 		virtual void intialization() = 0;
 		virtual void em() = 0;
-		virtual void align() = 0;
+		virtual void align() = 0;*/
 
-	private:
+	protected:
 		T* _model;
 		T* _data;
 	};
