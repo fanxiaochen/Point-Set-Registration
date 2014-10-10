@@ -32,9 +32,9 @@ namespace cpd
 		void nonrigid();
 
 	private:
-		T _model;
-		T _data;
-		RegType _type;
+		T			_model;
+		T			_data;
+		RegType		_type;
 	};
 }
 

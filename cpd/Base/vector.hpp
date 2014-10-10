@@ -13,6 +13,7 @@ namespace cpd
 
 	template <typename T>
 	class Vector4: public Eigen::Matrix<T, 4, 1>{};
+
 }
 
 #endif

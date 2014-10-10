@@ -7,9 +7,6 @@
 namespace cpd
 {
 	typedef enum {EMPTY, RIGID, AFFINE, NONRIGID} RegType;
-	typedef enum {ZERO, DYNAMIC, TWO, THREE} Dim;
-
-	typedef float value_type;
 
 	template <class T>
 	void getInputData(const std::string& model_file, const std::string& data_file, 
