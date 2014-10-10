@@ -1,10 +1,12 @@
 #ifndef CPD_AFFINE_HPP
 #define CPD_AFFINE_HPP
 
+#include "Core/cpd_base.hpp"
+
 namespace cpd
 {
 	template <class T>
-	class CPDAffine: public CPDBase
+	class CPDAffine: public CPDBase<T>
 	{
 	public:
 		CPDAffine();

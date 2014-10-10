@@ -4,7 +4,7 @@
 #include "Base/data.hpp"
 #include "Core/registrator.hpp"
 //#include "Core/cpd_base.h"
-//#include "Core/cpd_rigid.h"
+#include "Core/cpd_rigid.hpp"
 
 int main()
 {
@@ -23,7 +23,7 @@ int main()
 	cpd::Registrator<cpd::Matrix2<cpd::value_type, 2> > reg;
 	reg.getCorrespondences();
 	mat = reg.getData();
-	/*cpd::Matrix2<cpd::value_type, 2> mat;
-	cpd::CPDRigid<float >* cpd_base = new cpd::CPDRigid<float>;
-	cpd_base->apply();*/
+
+	cpd::CPDRigid<double >* cpd_base = new cpd::CPDRigid<double>;
+	cpd_base->apply();
 }

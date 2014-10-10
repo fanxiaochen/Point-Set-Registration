@@ -1,15 +1,17 @@
 #ifndef CPD_RIGID_HPP
 #define CPD_RIGID_HPP
 
+#include "Core/cpd_base.hpp"
+
 namespace cpd
 {
 	template <class T>
-	class CPDRigid: public CPDBase
+	class CPDRigid: public CPDBase<T>
 	{
 	public:
 		CPDRigid();
 		virtual ~CPDRigid();
-		//void apply();
+		void apply();
 
 	private:
 		void intialization();
@@ -29,11 +31,11 @@ namespace cpd
 	template <class T>
 	CPDRigid<T>::~CPDRigid(){}
 
-	/*template<class T>
+	template<class T>
 	void CPDRigid<T>::apply()
 	{
-
-	}*/
+		std::cout << sizeof(T) << std::endl;
+	}
 
 	template<class T>
 	void CPDRigid<T>::intialization()

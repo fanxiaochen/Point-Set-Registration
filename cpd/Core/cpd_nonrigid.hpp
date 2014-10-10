@@ -4,7 +4,7 @@
 namespace cpd
 {
 	template <class T>
-	class CPDNRigid: public CPDBase
+	class CPDNRigid: public CPDBase<T>
 	{
 	public:
 		CPDNRigid();
