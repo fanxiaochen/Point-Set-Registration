@@ -7,52 +7,37 @@ if( NOT EIGEN3_INCLUDE_DIR )
 endif()
 include_directories(${EIGEN3_INCLUDE_DIR})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cpd)
 
-set(inc_base include/Base)
-set(inc_core include/Core)
-set(src_base src/Base)
-set(src_core src/Core)
-
-set(incs_base 	${inc_base}/vector.h
-				${inc_base}/matrix.h
-				${inc_base}/parameters.h
-				${inc_base}/data.h)
-
-set(incs_core	${inc_core}/em.h
-				${inc_core}/registrator.h
-				${inc_core}/cpd_base.h
-				${inc_core}/cpd_rigid.h
-				${inc_core}/cpd_affine.h
-				${inc_core}/cpd_nonrigid.h)
+set(src_base cpd/Base)
+set(src_core cpd/Core)
 		 
-set(srcs_base 	${src_base}/vector.cpp
-				${src_base}/data.cpp)
+set(srcs_base 	${src_base}/vector.hpp
+				${src_base}/matrix.hpp
+				${src_base}/parameters.hpp
+				${src_base}/data.hpp)
 
-set(srcs_core	${src_core}/em.cpp
-				${src_core}/registrator.cpp
-				${src_core}/cpd_base.cpp
-				${src_core}/cpd_rigid.cpp
-				${src_core}/cpd_affine.cpp
-				${src_core}/cpd_nonrigid.cpp)
+set(srcs_core	${src_core}/em.hpp
+				${src_core}/registrator.hpp
+				${src_core}/cpd_base.hpp
+				${src_core}/cpd_rigid.hpp
+				${src_core}/cpd_affine.hpp
+				${src_core}/cpd_nonrigid.hpp)
 				
-set(incs 		${incs_base} ${incs_core})
-set(srcs		${srcs_base} ${srcs_core})
+set(srcs_test	cpd/test.cpp)
+
+set(srcs		${srcs_base} ${srcs_core} ${srcs_test})
 
 
 #Organize the files
-set(Headers 	"Header Files")
 set(Sources		"Source Files")
 
-set(headfiles_base		${Headers}\\Base)
-set(headfiles_core		${Headers}\\Core)
 set(srcfiles_base		${Sources}\\Base)
 set(srcfiles_core		${Sources}\\Core)
-
-source_group(${headfiles_base} FILES ${incs_base})
-source_group(${headfiles_core} FILES ${incs_core})
+set(srcfiles_test		${Sources})
 
 source_group(${srcfiles_base} FILES ${srcs_base})
 source_group(${srcfiles_core} FILES ${srcs_core})
+source_group(${srcfiles_test} FILES ${srcs_test})
 
-add_executable(CPD ${srcs} ${incs})
+add_executable(CPD ${srcs})

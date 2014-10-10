@@ -1,4 +1,23 @@
-#include "Core/cpd_nonrigid.h"
+#ifndef CPD_NRIGID_H
+#define CPD_NRIGID_H
+
+namespace cpd
+{
+	template <class T>
+	class CPDNRigid: public CPDBase
+	{
+	public:
+		CPDNRigid();
+		virtual ~CPDNRigid();
+
+		void intialization();
+		void em();
+		void align();
+
+	private:
+
+	};
+}
 
 namespace cpd
 {
@@ -26,3 +45,5 @@ namespace cpd
 
 	}
 }
+
+#endif

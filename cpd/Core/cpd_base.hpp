@@ -11,8 +11,9 @@ namespace cpd
 		virtual ~CPDBase();
 
 		void setInputData(T* const model, T* const data);
-		
-		void apply();
+		virtual void apply() = 0;
+
+	private:
 		virtual void intialization() = 0;
 		virtual void em() = 0;
 		virtual void align() = 0;
@@ -21,6 +22,22 @@ namespace cpd
 		T* _model;
 		T* _data;
 	};
+}
+
+namespace cpd
+{
+	template <class T>
+	CPDBase<T>::CPDBase(){}
+
+	template <class T>
+	CPDBase<T>::~CPDBase(){}
+
+	template <class T>
+	void CPDBase<T>::setInputData(T* const model, T* const data)
+	{
+		_model = model;
+		_data = data;
+	}
 }
 
 #endif
