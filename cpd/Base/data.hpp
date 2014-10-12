@@ -8,14 +8,12 @@ namespace cpd
 {
 	typedef enum {EMPTY, RIGID, AFFINE, NONRIGID} RegType;
 
-	typedef float value_type;
-
-	template <class T>
+	template <typename T, int D>
 	void getInputData(const std::string& model_file, const std::string& data_file, 
-		T& model, T& data)
+		MatrixType<T, D>::Vector& model, MatrixType<T, D>::Vector& data)
 	{
 		// read files and fill the model and data matrices
-
+		MatrixD matrix;
 	}
 }
 

@@ -5,7 +5,7 @@
 
 namespace cpd
 {
-	template <class T>
+	template <typename T, int D>
 	class Registrator
 	{
 	public:
@@ -15,11 +15,11 @@ namespace cpd
 		Registrator();
 		~Registrator();
 
-		void setInputData(const T& model, const T& data);
+		void setInputData(const MatrixD& model, const MatrixD& data);
 		void setType(RegType type);
 
-		inline T& getModel(){return _model;}
-		inline T& getData(){return _data;}
+		inline MatrixD& getModel(){return _model;}
+		inline MatrixD& getData(){return _data;}
 
 		void getCorrespondences();
 		void getParameters();
@@ -32,53 +32,54 @@ namespace cpd
 		void nonrigid();
 
 	private:
-		T			_model;
-		T			_data;
-		RegType		_type;
+		MatrixD			_model;
+		MatrixD			_data;
+		RegType			_type;
 	};
 }
 
 namespace cpd
 {
-	template <class T>
-	Registrator<T>::Registrator()
+	template <typename T, int D>
+	Registrator<T, D>::Registrator()
 		:_type(EMPTY)
 	{
 
 	}
 
-	template <class T>
-	Registrator<T>::~Registrator()
+	template <typename T, int D>
+	Registrator<T, D>::~Registrator()
 	{
 
 	}
 
-	template <class T>
-	void Registrator<T>::setInputData(const T& model, const T& data)
+	template <typename T, int D>
+	void Registrator<T, D>::setInputData(const MatrixD& model, const MatrixD& data)
 	{
-
+		_model = model;
+		_data = data;
 	}
 
-	template <class T>
-	void Registrator<T>::setType(RegType type)
+	template <typename T, int D>
+	void Registrator<T, D>::setType(RegType type)
 	{
 		_type = type;
 	}
 
-	template <class T>
-	void Registrator<T>::getParameters()
+	template <typename T, int D>
+	void Registrator<T, D>::getParameters()
 	{
 
 	}
 
-	template <class T>
-	void Registrator<T>::getCorrespondences()
+	template <typename T, int D>
+	void Registrator<T, D>::getCorrespondences()
 	{
 
 	}
 
-	template <class T>
-	void Registrator<T>::run()
+	template <typename T, int D>
+	void Registrator<T, D>::run()
 	{
 		if (_type == EMPTY)
 			std::cout << "Please set the type of the registration!" << std::endl;
@@ -92,24 +93,24 @@ namespace cpd
 			std::cout << "Please check your registration type setting!" << std::endl;
 	}
 
-	template <class T>
-	void Registrator<T>::rigid()
+	template <typename T, int D>
+	void Registrator<T, D>::rigid()
 	{
 		CPDRigid cpd;
 		cpd.setInputData(&_model, &_data);
 		cpd.apply();
 	}
 
-	template <class T>
-	void Registrator<T>::affine()
+	template <typename T, int D>
+	void Registrator<T, D>::affine()
 	{
 		CPDAffine cpd;
 		cpd.setInputData(&_model, &_data);
 		cpd.apply();
 	}
 
-	template <class T>
-	void Registrator<T>::nonrigid()
+	template <typename T, int D>
+	void Registrator<T, D>::nonrigid()
 	{
 		CPDNRigid cpd;
 		cpd.setInputData(&_model, &_data);

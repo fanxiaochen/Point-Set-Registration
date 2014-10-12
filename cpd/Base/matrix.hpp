@@ -5,17 +5,19 @@
 
 namespace cpd
 {
-	typedef float value_type;
-
-	typedef Eigen::Matrix<value_type, Eigen::Dynamic, 1> Vector;
+	template <typename T, int D>
+	struct MatrixType
+	{
+		typedef Eigen::Matrix<T, Eigen::Dynamic, 1> Vector;
 	
-	typedef Eigen::Matrix<value_type, Eigen::Dynamic, 2> MatrixM2;
+		typedef Eigen::Matrix<T, Eigen::Dynamic, D> MatrixD;
 
-	typedef Eigen::Matrix<value_type, Eigen::Dynamic, 3> MatrixM3;
-
-	typedef Eigen::Matrix<value_type, Eigen::Dynamic, 4> MatrixM4;
-
-	typedef Eigen::Matrix<value_type, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+		typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Matrix;
+	};
+	
+//#define	Vector	MatrixType<T, D>::Vector	
+//#define	MatrixD MatrixType<T, D>::MatrixD	
+//#define	Matrix	MatrixType<T, D>::Matrix	
 }
 
 #endif

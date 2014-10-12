@@ -3,14 +3,14 @@
 
 namespace cpd
 {
-	template <class T>
+	template <typename T, int D>
 	class CPDBase
 	{
 	public:
 		CPDBase();
 		virtual ~CPDBase();
 
-		void setInputData(T* const model, T* const data);
+		void setInputData(MatrixD* const model, MatrixD* const data);
 		virtual void apply() = 0;
 
 	/*private:
@@ -19,21 +19,21 @@ namespace cpd
 		virtual void align() = 0;*/
 
 	protected:
-		T* _model;
-		T* _data;
+		MatrixD* _model;
+		MatrixD* _data;
 	};
 }
 
 namespace cpd
 {
-	template <class T>
-	CPDBase<T>::CPDBase(){}
+	template <typename T, int D>
+	CPDBase<T, D>::CPDBase(){}
 
-	template <class T>
-	CPDBase<T>::~CPDBase(){}
+	template <typename T, int D>
+	CPDBase<T, D>::~CPDBase(){}
 
-	template <class T>
-	void CPDBase<T>::setInputData(T* const model, T* const data)
+	template <typename T, int D>
+	void CPDBase<T, D>::setInputData(MatrixD* const model, MatrixD* const data)
 	{
 		_model = model;
 		_data = data;

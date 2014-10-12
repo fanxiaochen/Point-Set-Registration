@@ -5,19 +5,21 @@
 
 namespace cpd
 {
+	template <typename T, int D>
 	struct RigidParas  
 	{
 		Matrix _R;
 		Vector _t;
-		value_type _s;
-		value_type _squared_sigma;
+		T _s;
+		T _squared_sigma;
 	};
 
+	template <typename T, int D>
 	struct AffineParas  
 	{
 		Matrix _B;
 		Vector _t;
-		value_type _squared_sigma;
+		T _squared_sigma;
 	};
 }
 
