@@ -78,7 +78,7 @@ namespace cpd
 	}
 
 	template <class T>
-	void CPDRigid<T>::computeGaussianExp(size_t m, size_t n)
+	value_type CPDRigid<T>::computeGaussianExp(size_t m, size_t n)
 	{
 		Vector vec = _paras._s*_paras._R*_model->row(m) - _data->row(n);
 		value_type g_exp = exp(-vec.squaredNorm()/(2*_paras._squared_sigma));

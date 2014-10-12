@@ -10,35 +10,13 @@ namespace cpd
 
 	typedef float value_type;
 
-	template <typename T, int M>
-	void getInputData(const std::string& model_file, const std::string& data_file, 
-		Matrix2<T, M>& model, Matrix2<T, M>& data)
-	{
-		// read files and fill the model and data matrices
-
-	}
-
-	template <typename T, int M>
-	void getInputData(const std::string& model_file, const std::string& data_file, 
-		Matrix3<T, M>& model, Matrix3<T, M>& data)
-	{
-		// read files and fill the model and data matrices
-
-	}
-
-	class Test
-	{
-	public:
-		void print(){std::cout << "ok" << std::endl;}
-	};
-
 	template <class T>
-	class MyTemp
+	void getInputData(const std::string& model_file, const std::string& data_file, 
+		T& model, T& data)
 	{
-	public:
-		void test(){t_.printf();};
-		T t_;
-	};
+		// read files and fill the model and data matrices
+
+	}
 }
 
 #endif 
