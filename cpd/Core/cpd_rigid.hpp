@@ -15,10 +15,14 @@ namespace cpd
 		CPDRigid();
 		virtual ~CPDRigid();
 		void apply();
+
 	private:
 		T computeGaussianExp(size_t m, size_t n);
+		void initialization();
 		void e_step();
 		void m_step();
+		void align();
+
 	private:
 		RigidParas<T, D>	_paras;
 		size_t				_M;
@@ -117,7 +121,7 @@ namespace cpd
 		Matrix U = svd.matrixU();
 		Matrix V = svd.matrixV();
 		T det_uv = Matrix(U*V.transpose()).determinant();
-		Eigen::DiagonalMatrix<T, D> C;
+		DiagonalMatrix C;
 		C.setIdentity();
 		C(D - 1) = det_uv;
 
@@ -125,6 +129,12 @@ namespace cpd
 		_paras._s = Matrix(A.transpose()*_paras._R).trace() ;
 		_paras._t = mu_x - _paras._s * _paras._R * mu_y;
 		_paras._squared_sigma = ();
+
+	}
+
+	template <typename T, int D>
+	void CPDRigid<T, D>::align()
+	{
 
 	}
 }

@@ -13,10 +13,10 @@ namespace cpd
 		void setInputData(MatrixD* const model, MatrixD* const data);
 		virtual void apply() = 0;
 
-	/*private:
+	private:
 		virtual void intialization() = 0;
 		virtual void em() = 0;
-		virtual void align() = 0;*/
+		virtual void align() = 0;
 
 	protected:
 		MatrixD* _model;

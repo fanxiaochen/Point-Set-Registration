@@ -10,9 +10,9 @@ namespace cpd
 
 	template <typename T, int D>
 	void getInputData(const std::string& model_file, const std::string& data_file, 
-		MatrixType<T, D>::Vector& model, MatrixType<T, D>::Vector& data)
+		MatrixD& model, MatrixD& data)
 	{
-		// read files and fill the model and data matrices
+		// read files and fill the model and data matrice
 		MatrixD matrix;
 	}
 }
