@@ -15,11 +15,11 @@ namespace cpd
 		Registrator();
 		~Registrator();
 
-		void setInputData(const MatrixD& model, const MatrixD& data);
+		void setInputData(const TMatrixD& model, const TMatrixD& data);
 		void setType(RegType type);
 
-		inline MatrixD& getModel(){return _model;}
-		inline MatrixD& getData(){return _data;}
+		inline TMatrixD& getModel(){return _model;}
+		inline TMatrixD& getData(){return _data;}
 
 		void getCorrespondences();
 		void getParameters();
@@ -32,8 +32,8 @@ namespace cpd
 		void nonrigid();
 
 	private:
-		MatrixD			_model;
-		MatrixD			_data;
+		TMatrixD			_model;
+		TMatrixD			_data;
 		RegType			_type;
 	};
 }
@@ -54,7 +54,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void Registrator<T, D>::setInputData(const MatrixD& model, const MatrixD& data)
+	void Registrator<T, D>::setInputData(const TMatrixD& model, const TMatrixD& data)
 	{
 		_model = model;
 		_data = data;
@@ -96,7 +96,7 @@ namespace cpd
 	template <typename T, int D>
 	void Registrator<T, D>::rigid()
 	{
-		CPDRigid cpd;
+		CPDRigid<T, D> cpd;
 		cpd.setInputData(&_model, &_data);
 		cpd.apply();
 	}
@@ -104,17 +104,17 @@ namespace cpd
 	template <typename T, int D>
 	void Registrator<T, D>::affine()
 	{
-		CPDAffine cpd;
+		/*CPDAffine<T, D> cpd;
 		cpd.setInputData(&_model, &_data);
-		cpd.apply();
+		cpd.apply();*/
 	}
 
 	template <typename T, int D>
 	void Registrator<T, D>::nonrigid()
 	{
-		CPDNRigid cpd;
+		/*CPDNRigid<T, D> cpd;
 		cpd.setInputData(&_model, &_data);
-		cpd.apply();
+		cpd.apply();*/
 	}
 }
 

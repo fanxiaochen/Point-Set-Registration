@@ -8,8 +8,8 @@ namespace cpd
 	template <typename T, int D>
 	struct RigidParas  
 	{
-		Matrix _R;
-		Vector _t;
+		TMatrix _R;
+		TVector _t;
 		T _s;
 		T _squared_sigma;
 	};
@@ -17,8 +17,8 @@ namespace cpd
 	template <typename T, int D>
 	struct AffineParas  
 	{
-		Matrix _B;
-		Vector _t;
+		TMatrix _B;
+		TVector _t;
 		T _squared_sigma;
 	};
 }

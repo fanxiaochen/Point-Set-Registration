@@ -11,9 +11,12 @@ namespace cpd
 	public:
 		CPDAffine();
 		virtual ~CPDAffine();
+		virtual apply();
 
+	private:
 		void intialization();
-		void em();
+		void e_step();
+		void m_step();
 		void align();
 
 	private:

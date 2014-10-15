@@ -1,7 +1,7 @@
 #ifndef MATRIX_HPP
 #define MATRIX_HPP
 
-#include <Eigen/Dense>
+#include <Eigen/Core>
 
 namespace cpd
 {
@@ -14,13 +14,13 @@ namespace cpd
 
 		typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> Matrix;
 
-		typedef Eigen::DiagonalMatrix<T, D> DiagonalMatrix;
+		//typedef Eigen::DiagonalMatrix<T, D> DiagonalMatrix;
 	};
 	
-#define		Vector			typename MatrixType<T, D>::Vector	
-#define		MatrixD			typename MatrixType<T, D>::MatrixD	
-#define		Matrix			typename MatrixType<T, D>::Matrix	
-#define		DiagonalMatrix	typename MatrixType<T, D>::DiagonalMatrix;
+#define		TVector			typename MatrixType<T, D>::Vector	
+#define		TMatrixD			typename MatrixType<T, D>::MatrixD	
+#define		TMatrix			typename MatrixType<T, D>::Matrix	
+//#define		TDiagonalMatrix	typename MatrixType<T, D>::DiagonalMatrix;
 }
 
 #endif
