@@ -11,7 +11,7 @@ namespace cpd
 		TMatrix _R;
 		TVector _t;
 		T _s;
-		T _squared_sigma;
+		T _sigma2;
 	};
 
 	template <typename T, int D>
@@ -19,7 +19,7 @@ namespace cpd
 	{
 		TMatrix _B;
 		TVector _t;
-		T _squared_sigma;
+		T _sigma2;
 	};
 }
 

@@ -9,32 +9,28 @@ namespace cpd
 	class Registrator
 	{
 	public:
-		static bool ONE_STEP;
-
-	public:
 		Registrator();
-		~Registrator();
+		virtual ~Registrator();
 
-		void setInputData(const TMatrixD& model, const TMatrixD& data);
+		void setInputData(TMatrixD* model, TMatrixD* data);
 		void setType(RegType type);
 
-		inline TMatrixD& getModel(){return _model;}
-		inline TMatrixD& getData(){return _data;}
+		inline TMatrixD* const getModel(){return _model;}
+		inline TMatrixD* const getData(){return _data;}
 
-		void getCorrespondences();
-		void getParameters();
+	
 		
-		void run();
+		virtual void run() = 0;
 
-	private:
+	/*private:
 		void rigid();
 		void affine();
-		void nonrigid();
+		void nonrigid();*/
 
-	private:
-		TMatrixD			_model;
-		TMatrixD			_data;
-		RegType			_type;
+	protected:
+		TMatrixD*			_model;
+		TMatrixD*			_data;
+		RegType				_type;
 	};
 }
 
@@ -42,7 +38,6 @@ namespace cpd
 {
 	template <typename T, int D>
 	Registrator<T, D>::Registrator()
-		:_type(EMPTY)
 	{
 
 	}
@@ -54,7 +49,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void Registrator<T, D>::setInputData(const TMatrixD& model, const TMatrixD& data)
+	void Registrator<T, D>::setInputData(TMatrixD* model, TMatrixD* data)
 	{
 		_model = model;
 		_data = data;
@@ -66,19 +61,7 @@ namespace cpd
 		_type = type;
 	}
 
-	template <typename T, int D>
-	void Registrator<T, D>::getParameters()
-	{
-
-	}
-
-	template <typename T, int D>
-	void Registrator<T, D>::getCorrespondences()
-	{
-
-	}
-
-	template <typename T, int D>
+	/*template <typename T, int D>
 	void Registrator<T, D>::run()
 	{
 		if (_type == EMPTY)
@@ -91,31 +74,31 @@ namespace cpd
 			nonrigid();
 		else
 			std::cout << "Please check your registration type setting!" << std::endl;
-	}
+	}*/
 
-	template <typename T, int D>
-	void Registrator<T, D>::rigid()
-	{
-		CPDRigid<T, D> cpd;
-		cpd.setInputData(&_model, &_data);
-		cpd.apply();
-	}
+	//template <typename T, int D>
+	//void Registrator<T, D>::rigid()
+	//{
+	//	CPDRigid<T, D> cpd;
+	//	cpd.setInputData(&_model, &_data);
+	//	cpd.apply();
+	//}
 
-	template <typename T, int D>
-	void Registrator<T, D>::affine()
-	{
-		/*CPDAffine<T, D> cpd;
-		cpd.setInputData(&_model, &_data);
-		cpd.apply();*/
-	}
+	//template <typename T, int D>
+	//void Registrator<T, D>::affine()
+	//{
+	//	/*CPDAffine<T, D> cpd;
+	//	cpd.setInputData(&_model, &_data);
+	//	cpd.apply();*/
+	//}
 
-	template <typename T, int D>
-	void Registrator<T, D>::nonrigid()
-	{
-		/*CPDNRigid<T, D> cpd;
-		cpd.setInputData(&_model, &_data);
-		cpd.apply();*/
-	}
+	//template <typename T, int D>
+	//void Registrator<T, D>::nonrigid()
+	//{
+	//	/*CPDNRigid<T, D> cpd;
+	//	cpd.setInputData(&_model, &_data);
+	//	cpd.apply();*/
+	//}
 }
 
 #endif
