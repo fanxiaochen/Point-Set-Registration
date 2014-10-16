@@ -7,6 +7,7 @@
 #include <Eigen/SVD>
 #include "Core/cpd_base.hpp"
 #include "Base/parameters.hpp"
+#include "Base/visualizer.hpp"
 
 namespace cpd
 {
@@ -55,13 +56,24 @@ namespace cpd
 	template <typename T, int D>
 	void CPDRigid<T, D>::run()
 	{
+		Visualizer<T, D>* vis;
+
 		size_t iter_num = 0;
 		T tol = 10 + _tol;
 		T e = 0;
 
 		_T = _model;
-
+		
 		initialization();
+
+		/*if (_vision == true)
+		{
+			vis = new Visualizer<T, D>();
+			vis->updateModel(_T);
+			vis->updateData(_data);
+			vis->show();
+		}*/
+
 		while (iter_num < _iter_num && tol > _tol && _paras._sigma2 > 10 * _epsilon)
 		{
 			e_step();
@@ -77,11 +89,23 @@ namespace cpd
 			m_step();
 			align();	
 
+			/*if (_vision == true)
+				vis->updateModel(_T)*/;
+
 			iter_num ++;	
 		}
+		std::cout << "lastiter:" << iter_num << std::endl;
 		std::cout << "lasttol:" << tol << std::endl;
 		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
 		_model = _T;
+
+		if (_vision == true)
+		{
+			vis = new Visualizer<T, D>();
+			vis->updateModel(_T);
+			vis->updateData(_data);
+			vis->show();
+		}
 		
 	}
 

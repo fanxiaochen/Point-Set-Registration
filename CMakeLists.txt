@@ -5,7 +5,12 @@ set( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
 if( NOT EIGEN3_INCLUDE_DIR )
     message( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation." )
 endif()
+
+find_package(OpenSceneGraph REQUIRED osgViewer osgGA)
+
 include_directories(${EIGEN3_INCLUDE_DIR})
+include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
+
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cpd)
 
@@ -15,7 +20,8 @@ set(src_core cpd/Core)
 set(srcs_base 	${src_base}/vector.hpp
 				${src_base}/matrix.hpp
 				${src_base}/parameters.hpp
-				${src_base}/data.hpp)
+				${src_base}/data.hpp
+				${src_base}/visualizer.hpp)
 
 set(srcs_core	${src_core}/em.hpp
 				${src_core}/registrator.hpp
@@ -41,3 +47,4 @@ source_group(${srcfiles_core} FILES ${srcs_core})
 source_group(${srcfiles_test} FILES ${srcs_test})
 
 add_executable(CPD ${srcs})
+target_link_libraries(CPD ${OPENSCENEGRAPH_LIBRARIES})

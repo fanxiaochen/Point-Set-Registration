@@ -10,8 +10,8 @@ using namespace cpd;
 
 int main()
 {
-	MatrixType<float, 2>::MatrixD model(4,2), data(4,2);
-	model << 1,2,
+	MatrixType<float, 2>::MatrixD model(91,2), data(91,2);
+	/*model << 1,2,
 			4,5,
 			7,8,
 			10,10;
@@ -19,11 +19,14 @@ int main()
 			4,5,
 			7,8,
 			10,10;
-	data = - model;
+	data = - model;*/
+	getInputData<float, 2>("x.txt", "y.txt", model, data);
+
 	CPDRigid<float, 2>* reg = new CPDRigid<float, 2>();
 	reg->setInputData(model, data);
 	reg->setType(RIGID);
-	reg->setIterativeNumber(150);
+	reg->setVision(true);
+	reg->setIterativeNumber(28);
 	reg->setMinimumValue();
 	reg->setEnergyTolerance(1e-5);
 	reg->setOutlierWeight(0.1);
