@@ -12,11 +12,11 @@ namespace cpd
 		Registrator();
 		virtual ~Registrator();
 
-		void setInputData(TMatrixD* model, TMatrixD* data);
+		void setInputData(const TMatrixD& model, const TMatrixD& data);
 		void setType(RegType type);
 
-		inline TMatrixD* const getModel(){return _model;}
-		inline TMatrixD* const getData(){return _data;}
+		inline TMatrixD& getModel(){return _model;}
+		inline TMatrixD& getData(){return _data;}
 
 	
 		
@@ -28,8 +28,8 @@ namespace cpd
 		void nonrigid();*/
 
 	protected:
-		TMatrixD*			_model;
-		TMatrixD*			_data;
+		TMatrixD			_model;
+		TMatrixD			_data;
 		RegType				_type;
 	};
 }
@@ -49,7 +49,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void Registrator<T, D>::setInputData(TMatrixD* model, TMatrixD* data)
+	void Registrator<T, D>::setInputData(const TMatrixD& model, const TMatrixD& data)
 	{
 		_model = model;
 		_data = data;

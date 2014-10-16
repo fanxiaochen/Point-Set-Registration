@@ -21,17 +21,17 @@ int main()
 			10,10;
 
 	CPDRigid<float, 2>* reg = new CPDRigid<float, 2>();
-	reg->setInputData(&model, &data);
+	reg->setInputData(model, data);
 	reg->setType(RIGID);
-	reg->setIterativeNumber(10);
+	reg->setIterativeNumber(150);
 	reg->setMinimumValue();
 	reg->setEnergyTolerance(1e-5);
-	reg->setOutlierWeight(0);
+	reg->setOutlierWeight(0.1);
 	reg->run();
 
 	std::cout << "results:" << std::endl;
 	std::cout << "model:" << std::endl;
-	std::cout << *reg->getModel() << std::endl;
+	std::cout << reg->getModel() << std::endl;
 	std::cout << "data:" << std::endl;
-	std::cout << *reg->getData() << std::endl;
+	std::cout << reg->getData() << std::endl;
 }

@@ -38,6 +38,8 @@ namespace cpd
 		size_t				_M;
 		size_t				_N;
 		TMatrix				_corres;
+		TMatrix				_T;
+
 		bool				_scale;
 	};
 }
@@ -57,19 +59,29 @@ namespace cpd
 		T tol = 10 + _tol;
 		T e = 0;
 
+		_T = _model;
+
 		initialization();
 		while (iter_num < _iter_num && tol > _tol && _paras._sigma2 > 10 * _epsilon)
 		{
 			e_step();
+
+			T old_e = e;
+			//std::cout << _corres << std::endl;
+
+			e = energy();
+			tol = (e - old_e) / e;
+
+			std::cout << "iter = " << iter_num << " tol = " << tol << " sigma2 = " << _paras._sigma2 << std::endl;
+
 			m_step();
+			align();	
 
-			T e_new = energy();
-			tol = (e_new - e) / e;
-
-			iter_num ++;
+			iter_num ++;	
 		}
 		
-		align();
+		_model = _T;
+		
 	}
 
 	template <typename T, int D>
@@ -77,8 +89,8 @@ namespace cpd
 	{
 
 		// determine data dimension
-		_M = _model->rows();
-		_N = _data->rows();
+		_M = _model.rows();
+		_N = _data.rows();
 
 		// initialization
 		_paras._R = TMatrix::Identity(D, D);
@@ -88,41 +100,43 @@ namespace cpd
 		T sigma_sum = 0;
 		for (size_t m = 0; m < _M; m ++)
 		{
-			TVector model_row = _model->row(m);
+			TVector model_row = _model.row(m);
 			for (size_t n = 0; n < _N; n ++)
 			{
-				TVector data_row = _data->row(n);
+				TVector data_row = _data.row(n);
 				sigma_sum += TVector(model_row - data_row).squaredNorm();
 			}
 		}
 		_paras._sigma2 = sigma_sum / (D*_M*_N);
 
-		_w = 0.5; 
+		/*T sigma_sum = _N*(_data.transpose()*(*_data)).trace() + 
+			_M*(_model.transpose()*(*_model)).trace() - 
+			2*_data.colwise().sum()*_model.colwise().sum().transpose();
+		_paras._sigma2 = sigma_sum / (D*_N*_M);*/
+
 
 	}
 
 	template <typename T, int D>
 	T CPDRigid<T, D>::computeGaussianExp(size_t m, size_t n)
 	{
-		TVector vec = TVector(_paras._s * _paras._R * TVector(_model->row(m)) - TVector(_data->row(n)));
+		TVector vec = TVector(_T.row(m) - _data.row(n));
 		T g_exp = exp(-vec.squaredNorm()/(2*_paras._sigma2));
 		return g_exp;
 	}
 
 	template <typename T, int D>
-	T CPDRigid<T, D>::energy()
+	T CPDRigid<T, D>::energy() // error occurs
 	{
 		T e = 0;
 		
 		for (size_t n = 0; n < _N; n ++)
 		{
-			TVector d_vec(_data->row(n));
+			TVector d_vec(_data.row(n));
 			for (size_t m = 0; m < _M; m ++)
 			{
-				TVector m_vec(_model->row(m));
-				TVector T_m = (_paras._s) * (_paras._R) * m_vec + (_paras._t);
-				
-				e += TVector(d_vec - T_m).squaredNorm();
+				TVector T_m(_T.row(m));
+				e += _corres(m, n) * TVector(d_vec - T_m).squaredNorm();
 			}
 		}
 
@@ -154,19 +168,30 @@ namespace cpd
 				_corres(m, n) = t_exp.at(m) / (sum_exp + c);
 			}
 		}
-
-		std::cout << _corres << std::endl;
 	}
 
 	template <typename T, int D>
 	void CPDRigid<T, D>::m_step()
 	{
 		T N_P = _corres.sum();
-		TVector mu_x = _data->transpose() * _corres.transpose() * TVector(_M).setOnes() / N_P;
-		TVector mu_y = _model->transpose() * _corres * TVector(_N).setOnes() / N_P;
-		TMatrixD X_hat = *_data - TMatrix(TVector(_N).setOnes() * mu_x.transpose());
-		TMatrixD Y_hat = *_model - TMatrix(TVector(_M).setOnes() * mu_y.transpose());
+		TVector P_1 = _corres * TVector(_N).setOnes();
+		TVector PT_1 = _corres.transpose() * TVector(_M).setOnes();
+
+		//std::cout << energy() << std::endl;
+		std::cout << P_1 << std::endl;
+		std::cout << PT_1 << std::endl;
+
+		TVector mu_x = _data.transpose() * PT_1 / N_P;
+		TVector mu_y = _model.transpose() * P_1 / N_P;
+
+		std::cout << mu_x << std::endl;
+		std::cout << mu_y << std::endl;
+
+		TMatrixD X_hat = _data - TMatrix(TVector(_N).setOnes() * mu_x.transpose());
+		TMatrixD Y_hat = _model - TMatrix(TVector(_M).setOnes() * mu_y.transpose());
 		TMatrix A = X_hat.transpose() * _corres.transpose() * Y_hat;
+
+		std::cout << A << std::endl;
 
 		Eigen::JacobiSVD<TMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 		TMatrix U = svd.matrixU();
@@ -190,13 +215,20 @@ namespace cpd
 		T tr_b = TMatrix(A.transpose()*_paras._R).trace();
 		_paras._sigma2 = (tr_f - _paras._s * tr_b) / (N_P * D);
 
+		std::cout << std::endl;
+		std::cout << _paras._R << std::endl;
+		std::cout << _paras._t << std::endl;
+		std::cout << _paras._s << std::endl;
+
 	}
 
 	template <typename T, int D>
 	void CPDRigid<T, D>::align()
 	{
-		*_model = (_paras._s) * (*_model) * (_paras._R).transpose() + 
+		_T = (_paras._s) * (_model) * (_paras._R).transpose() + 
 			TVector(_M).setOnes() * (_paras._t).transpose();
+
+		//std::cout << *_model << std::endl;
 	}
 
 	template <typename T, int D>
