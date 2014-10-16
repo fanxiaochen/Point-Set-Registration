@@ -26,9 +26,9 @@ int main()
 	reg->setInputData(model, data);
 	reg->setType(RIGID);
 	reg->setVision(true);
-	reg->setIterativeNumber(28);
+	reg->setIterativeNumber(100);
 	reg->setMinimumValue();
-	reg->setEnergyTolerance(1e-5);
+	reg->setEnergyTolerance(1e-8);
 	reg->setOutlierWeight(0.1);
 	reg->run();
 

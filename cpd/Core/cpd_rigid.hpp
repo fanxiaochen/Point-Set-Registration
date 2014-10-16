@@ -157,15 +157,19 @@ namespace cpd
 		
 		for (size_t n = 0; n < _N; n ++)
 		{
-			TVector d_vec(_data.row(n));
+			T sp = 0;
 			for (size_t m = 0; m < _M; m ++)
 			{
-				TVector T_m(_T.row(m));
-				e += _corres(m, n) * TVector(d_vec - T_m).squaredNorm();
+				sp += computeGaussianExp(m, n);
 			}
+
+			sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+
+			e += -log(sp);
+
 		}
 
-		e = e / (2*_paras._sigma2) + _corres.sum()*D*log(_paras._sigma2) / 2;
+		e += _N * D * log(_paras._sigma2) / 2;
 
 		return e;
 	}
@@ -180,7 +184,7 @@ namespace cpd
 		{
 			typename std::vector<T> t_exp;
 			T sum_exp = 0;
-			T c = pow((2*M_PI*_paras._sigma2), D/2) * (_w/(1-_w)) * (_M/_N);
+			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
 			for (size_t m = 0; m < _M; m ++)
 			{
 				T m_exp = computeGaussianExp(m, n);
