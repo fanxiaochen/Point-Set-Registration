@@ -70,7 +70,7 @@ namespace cpd
 			//std::cout << _corres << std::endl;
 
 			e = energy();
-			tol = (e - old_e) / e;
+			tol = abs((e - old_e) / e);
 
 			std::cout << "iter = " << iter_num << " tol = " << tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
@@ -79,7 +79,8 @@ namespace cpd
 
 			iter_num ++;	
 		}
-		
+		std::cout << "lasttol:" << tol << std::endl;
+		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
 		_model = _T;
 		
 	}

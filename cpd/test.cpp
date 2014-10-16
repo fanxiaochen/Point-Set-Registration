@@ -19,7 +19,7 @@ int main()
 			4,5,
 			7,8,
 			10,10;
-
+	data = - model;
 	CPDRigid<float, 2>* reg = new CPDRigid<float, 2>();
 	reg->setInputData(model, data);
 	reg->setType(RIGID);
