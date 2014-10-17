@@ -13,14 +13,12 @@ namespace cpd
 		virtual ~Registrator();
 
 		void setInputData(const TMatrixD& model, const TMatrixD& data);
-		void setType(RegType type);
 		void setVision(bool vision);
 
-		inline TMatrixD& getModel(){return _model;}
-		inline TMatrixD& getData(){return _data;}
+		inline RegType getRegistrationType(){ return _type; }
+		inline TMatrixD& getModel(){ return _model; }
+		inline TMatrixD& getData(){ return _data; }
 
-	
-		
 		virtual void run() = 0;
 
 	/*private:
@@ -40,7 +38,7 @@ namespace cpd
 {
 	template <typename T, int D>
 	Registrator<T, D>::Registrator()
-		:_type(EMPTY), _vision(false)
+		: _type(UNDEFINED), _vision(false)
 	{
 
 	}
@@ -56,12 +54,6 @@ namespace cpd
 	{
 		_model = model;
 		_data = data;
-	}
-
-	template <typename T, int D>
-	void Registrator<T, D>::setType(RegType type)
-	{
-		_type = type;
 	}
 
 	template <typename T, int D>

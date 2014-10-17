@@ -18,37 +18,31 @@ namespace cpd
 		CPDRigid();
 		virtual ~CPDRigid();
 
-		void getCorrespondences();
-		void getParameters();
-		inline RegType getRegistrationType(){ return _type; }
+		inline RigidParas<T, D>& getParameters(){ return _paras; }
 
 		void run();
 
-		void setScaler(bool scale);
-
 	private:
+		void initialization();
+		void e_step();
+		void m_step();
+		void align();
+
 		T computeGaussianExp(size_t m, size_t n);
 		T energy();
-		virtual void initialization();
-		virtual void e_step();
-		virtual void m_step();
-		virtual void align();
 
 	private:
 		RigidParas<T, D>	_paras;
-		size_t				_M;
-		size_t				_N;
-		TMatrix				_corres;
-		TMatrix				_T;
-
-		bool				_scale;
 	};
 }
 
 namespace cpd
 {
 	template <typename T, int D>
-	CPDRigid<T, D>::CPDRigid(){}
+	CPDRigid<T, D>::CPDRigid()
+	{
+		_type = RIGID;
+	}
 
 	template <typename T, int D>
 	CPDRigid<T, D>::~CPDRigid(){}
@@ -59,7 +53,7 @@ namespace cpd
 		Visualizer<T, D>* vis;
 
 		size_t iter_num = 0;
-		T tol = 10 + _tol;
+		T e_tol = 10 + _e_tol;
 		T e = 0;
 
 		_T = _model;
@@ -74,7 +68,7 @@ namespace cpd
 			vis->show();
 		}*/
 
-		while (iter_num < _iter_num && tol > _tol && _paras._sigma2 > 10 * _epsilon)
+		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
 			e_step();
 
@@ -82,9 +76,9 @@ namespace cpd
 			//std::cout << _corres << std::endl;
 
 			e = energy();
-			tol = abs((e - old_e) / e);
+			e_tol = abs((e - old_e) / e);
 
-			std::cout << "iter = " << iter_num << " tol = " << tol << " sigma2 = " << _paras._sigma2 << std::endl;
+			std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
 			m_step();
 			align();	
@@ -95,7 +89,7 @@ namespace cpd
 			iter_num ++;	
 		}
 		std::cout << "lastiter:" << iter_num << std::endl;
-		std::cout << "lasttol:" << tol << std::endl;
+		std::cout << "lasttol:" << e_tol << std::endl;
 		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
 		_model = _T;
 
@@ -142,37 +136,7 @@ namespace cpd
 
 	}
 
-	template <typename T, int D>
-	T CPDRigid<T, D>::computeGaussianExp(size_t m, size_t n)
-	{
-		TVector vec = TVector(_T.row(m) - _data.row(n));
-		T g_exp = exp(-vec.squaredNorm()/(2*_paras._sigma2));
-		return g_exp;
-	}
-
-	template <typename T, int D>
-	T CPDRigid<T, D>::energy() // error occurs
-	{
-		T e = 0;
-		
-		for (size_t n = 0; n < _N; n ++)
-		{
-			T sp = 0;
-			for (size_t m = 0; m < _M; m ++)
-			{
-				sp += computeGaussianExp(m, n);
-			}
-
-			sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
-
-			e += -log(sp);
-
-		}
-
-		e += _N * D * log(_paras._sigma2) / 2;
-
-		return e;
-	}
+	
 
 	template <typename T, int D>
 	void CPDRigid<T, D>::e_step()
@@ -261,15 +225,35 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void CPDRigid<T, D>::getParameters()
+	T CPDRigid<T, D>::computeGaussianExp(size_t m, size_t n)
 	{
-
+		TVector vec = TVector(_T.row(m) - _data.row(n));
+		T g_exp = exp(-vec.squaredNorm()/(2*_paras._sigma2));
+		return g_exp;
 	}
 
 	template <typename T, int D>
-	void CPDRigid<T, D>::getCorrespondences()
+	T CPDRigid<T, D>::energy() // error occurs
 	{
+		T e = 0;
+		
+		for (size_t n = 0; n < _N; n ++)
+		{
+			T sp = 0;
+			for (size_t m = 0; m < _M; m ++)
+			{
+				sp += computeGaussianExp(m, n);
+			}
 
+			sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+
+			e += -log(sp);
+
+		}
+
+		e += _N * D * log(_paras._sigma2) / 2;
+
+		return e;
 	}
 }
 #endif

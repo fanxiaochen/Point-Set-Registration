@@ -7,7 +7,7 @@
 
 namespace cpd
 {
-	typedef enum {EMPTY, RIGID, AFFINE, NONRIGID} RegType;
+	typedef enum {UNDEFINED, RIGID, AFFINE, NONRIGID} RegType;
 
 	template <typename T, int D>
 	void getInputData(const std::string& model_file, const std::string& data_file, 

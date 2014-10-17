@@ -25,11 +25,10 @@ int main()
 
 	CPDNRigid<float, 2>* reg = new CPDNRigid<float, 2>();
 	reg->setInputData(model, data);
-	reg->setType(NONRIGID);
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
-	reg->setMinimumValue();
-	reg->setEnergyTolerance(1e-7);
+	reg->setVarianceTolerance(1e-8);
+	reg->setEnergyTolerance(1e-5);
 	reg->setOutlierWeight(0.1);
 	reg->run();
 

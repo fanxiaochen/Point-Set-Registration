@@ -11,12 +11,12 @@ namespace cpd
 		virtual ~CPDBase();
 
 		void setIterativeNumber(size_t iter_num);
-		void setMinimumValue();
-		void setEnergyTolerance(T tol);
+		void setVarianceTolerance(T v_tol);
+		void setEnergyTolerance(T e_tol);
 		void setOutlierWeight(T w);
 
-		virtual void getCorrespondences() = 0;
-		virtual void getParameters() = 0;
+		inline const TMatrix& getTransform(){ return _T; } 
+		inline const TMatrix& getCorrespondences(){ return _corres; }
 
 		virtual void run() = 0;
 
@@ -27,10 +27,15 @@ namespace cpd
 		virtual void align() = 0;
 
 	protected:
-		size_t _iter_num;
-		T _epsilon;
-		T _tol;
-		T _w;
+		size_t		_iter_num;
+		T			_v_tol;
+		T			_e_tol;
+		T			_w;
+
+		size_t		_M;
+		size_t		_N;
+		TMatrix		_corres;
+		TMatrix		_T;
 	};
 }
 
@@ -38,7 +43,8 @@ namespace cpd
 {
 	template <typename T, int D>
 	CPDBase<T, D>::CPDBase()
-		: _iter_num(0), _epsilon(0), _tol(0), _w(0)
+		: _iter_num(0), _v_tol(0), _e_tol(0), _w(0),
+		_M(0), _N(0)
 	{}
 
 	template <typename T, int D>
@@ -51,15 +57,15 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void CPDBase<T, D>::setMinimumValue()
+	void CPDBase<T, D>::setVarianceTolerance(T v_tol)
 	{
-		_epsilon = std::numeric_limits<T>::epsilon();
+		_v_tol = v_tol;
 	}
 
 	template <typename T, int D>
-	void CPDBase<T, D>::setEnergyTolerance(T tol)
+	void CPDBase<T, D>::setEnergyTolerance(T e_tol)
 	{
-		_tol = tol;
+		_e_tol = e_tol;
 	}
 
 	template <typename T, int D>
