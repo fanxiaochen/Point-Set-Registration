@@ -113,7 +113,7 @@ namespace cpd
 	void CPDRigid<T, D>::initialization()
 	{
 
-		// determine data dimension
+		// determine data number
 		_M = _model.rows();
 		_N = _data.rows();
 

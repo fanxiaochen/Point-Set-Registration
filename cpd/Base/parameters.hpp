@@ -21,6 +21,15 @@ namespace cpd
 		TVector _t;
 		T _sigma2;
 	};
+
+	template <typename T, int D>
+	struct NRigidParas
+	{
+		TMatrix _W;
+		T _sigma2;
+		T _lamda;
+		T _beta;
+	};
 }
 
 #endif

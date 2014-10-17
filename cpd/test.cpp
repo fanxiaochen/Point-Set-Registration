@@ -5,6 +5,7 @@
 #include "Core/registrator.hpp"
 //#include "Core/cpd_base.h"
 #include "Core/cpd_rigid.hpp"
+#include "Core/cpd_nonrigid.hpp"
 
 using namespace cpd;
 
@@ -22,9 +23,9 @@ int main()
 	data = - model;*/
 	getInputData<float, 2>("x.txt", "y.txt", model, data);
 
-	CPDRigid<float, 2>* reg = new CPDRigid<float, 2>();
+	CPDNRigid<float, 2>* reg = new CPDNRigid<float, 2>();
 	reg->setInputData(model, data);
-	reg->setType(RIGID);
+	reg->setType(NONRIGID);
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
 	reg->setMinimumValue();
