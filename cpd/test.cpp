@@ -21,7 +21,7 @@ int main()
 			7,8,
 			10,10;
 	data = - model;*/
-	getInputData<float, 2>("x.txt", "y.txt", model, data);
+	getInputData<float, 2>("y-nonrigid.txt", "x-nonrigid.txt", model, data);
 
 	CPDNRigid<float, 2>* reg = new CPDNRigid<float, 2>();
 	reg->setInputData(model, data);
@@ -29,7 +29,7 @@ int main()
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
 	reg->setMinimumValue();
-	reg->setEnergyTolerance(1e-8);
+	reg->setEnergyTolerance(1e-7);
 	reg->setOutlierWeight(0.1);
 	reg->run();
 
