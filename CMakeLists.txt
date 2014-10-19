@@ -32,7 +32,8 @@ set(srcs_core	${src_core}/em.hpp
 				${src_core}/cpd_affine.hpp
 				${src_core}/cpd_nonrigid.hpp)
 
-set(srcs_fast		${src_fast}/fgt_wrapper.hpp)
+set(srcs_fast		${src_fast}/fgt_wrapper.hpp
+					${src_fast}/low_rank.hpp)
 
 set(srcs_3rdparty	${src_3rdparty}/figtree.h
 					${src_3rdparty}/figtree_internal.h
