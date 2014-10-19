@@ -5,9 +5,10 @@
 #include <vector>
 
 #include <Eigen/SVD>
-#include "Core/cpd_base.hpp"
-#include "Base/parameters.hpp"
-#include "Base/visualizer.hpp"
+#include "core/cpd_base.hpp"
+#include "base/parameters.hpp"
+#include "base/visualizer.hpp"
+#include "fast/fgt_wrapper.hpp"
 
 namespace cpd
 {
@@ -27,6 +28,7 @@ namespace cpd
 		void e_step();
 		void m_step();
 		void align();
+		void correspondences();
 
 		T computeGaussianExp(size_t m, size_t n);
 		T energy();
@@ -55,43 +57,28 @@ namespace cpd
 		size_t iter_num = 0;
 		T e_tol = 10 + _e_tol;
 		T e = 0;
-
-		_T = _model;
 		
 		initialization();
-
-		/*if (_vision == true)
-		{
-			vis = new Visualizer<T, D>();
-			vis->updateModel(_T);
-			vis->updateData(_data);
-			vis->show();
-		}*/
 
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
 			e_step();
+			m_step();
+			align();
 
 			T old_e = e;
 			//std::cout << _corres << std::endl;
-
 			e = energy();
 			e_tol = abs((e - old_e) / e);
 
-			std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
-
-			m_step();
-			align();	
-
-			/*if (_vision == true)
-				vis->updateModel(_T)*/;
-
+			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;	
 			iter_num ++;	
 		}
-		std::cout << "lastiter:" << iter_num << std::endl;
+		/*std::cout << "lastiter:" << iter_num << std::endl;
 		std::cout << "lasttol:" << e_tol << std::endl;
-		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
-		_model = _T;
+		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;*/
+		
+		updateModel();
 
 		if (_vision == true)
 		{
@@ -116,32 +103,19 @@ namespace cpd
 		_paras._t = TVector::Zero(D, 1);
 		_paras._s = 1;
 
-		T sigma_sum = 0;
-		for (size_t m = 0; m < _M; m ++)
-		{
-			TVector model_row = _model.row(m);
-			for (size_t n = 0; n < _N; n ++)
-			{
-				TVector data_row = _data.row(n);
-				sigma_sum += TVector(model_row - data_row).squaredNorm();
-			}
-		}
-		_paras._sigma2 = sigma_sum / (D*_M*_N);
+		T sigma_sum = _M*(_data.transpose()*_data).trace() + 
+			_N*(_model.transpose()*_model).trace() - 
+			2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
+		_paras._sigma2 = sigma_sum / (D*_N*_M);
 
-		/*T sigma_sum = _N*(_data.transpose()*(*_data)).trace() + 
-			_M*(_model.transpose()*(*_model)).trace() - 
-			2*_data.colwise().sum()*_model.colwise().sum().transpose();
-		_paras._sigma2 = sigma_sum / (D*_N*_M);*/
-
-
+		initTransform();
 	}
 
 	
 
 	template <typename T, int D>
-	void CPDRigid<T, D>::e_step()
+	void CPDRigid<T, D>::correspondences()
 	{
-
 		_corres.setZero(_M, _N);
 
 		for (size_t n = 0; n < _N; n ++)
@@ -164,27 +138,61 @@ namespace cpd
 	}
 
 	template <typename T, int D>
+	void CPDRigid<T, D>::e_step()
+	{
+		if (!_fgt)
+		{
+			correspondences();
+			_P1 = _corres * TVector(_N).setOnes();
+			_PT1 = _corres.transpose() * TVector(_M).setOnes();
+			_PX = _corres * _data;
+
+		}
+		else
+		{
+			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2));
+			TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
+
+			TMatrix aX = TMatrix::Zero(_N, D);
+			for (size_t i = 0; i < D; i ++)
+			{
+				aX.col(i) = _data.col(i).cwiseProduct(a);
+			}
+
+			_PT1 = TVector(_N).setOnes() - c * a;
+			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2));
+			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2));
+
+			//std::cout << "_P1:" << std::endl << _P1 << std::endl;
+			////std::cout << "_PT1:" << std::endl << _PT1 << std::endl;
+			//std::cout << "_PX:" << std::endl << _PX << std::endl;
+		}
+	}
+
+	template <typename T, int D>
 	void CPDRigid<T, D>::m_step()
 	{
-		T N_P = _corres.sum();
-		TVector P_1 = _corres * TVector(_N).setOnes();
-		TVector PT_1 = _corres.transpose() * TVector(_M).setOnes();
+		T N_P = _P1.sum();
 
 		//std::cout << energy() << std::endl;
-		std::cout << P_1 << std::endl;
-		std::cout << PT_1 << std::endl;
+		/*std::cout << _P1 << std::endl;
+		std::cout << _PT1 << std::endl;*/
 
-		TVector mu_x = _data.transpose() * PT_1 / N_P;
-		TVector mu_y = _model.transpose() * P_1 / N_P;
+		TVector mu_x = _data.transpose() * _PT1 / N_P;
+		TVector mu_y = _model.transpose() * _P1 / N_P;
 
-		std::cout << mu_x << std::endl;
-		std::cout << mu_y << std::endl;
+		/*std::cout << mu_x << std::endl;
+		std::cout << mu_y << std::endl;*/
 
 		TMatrixD X_hat = _data - TMatrix(TVector(_N).setOnes() * mu_x.transpose());
 		TMatrixD Y_hat = _model - TMatrix(TVector(_M).setOnes() * mu_y.transpose());
-		TMatrix A = X_hat.transpose() * _corres.transpose() * Y_hat;
+		//TMatrix A = X_hat.transpose() * _corres.transpose() * Y_hat;
 
-		std::cout << A << std::endl;
+		TMatrix A = (_PX-_P1*mu_x.transpose()).transpose() * 
+			(_model - TMatrix(TVector(_M).setOnes() * mu_y.transpose()));
+
+		//std::cout << A << std::endl;
 
 		Eigen::JacobiSVD<TMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 		TMatrix U = svd.matrixU();
@@ -197,21 +205,19 @@ namespace cpd
 		_paras._R = U * C.asDiagonal() * V.transpose();
 
 		T s_upper = TMatrix(A.transpose()*_paras._R).trace();
-		T s_lower = TMatrix(Y_hat.transpose()*
-			TVector(_corres*TVector(_N).setOnes()).asDiagonal()*Y_hat).trace();
+		T s_lower = TMatrix(Y_hat.transpose()*_P1.asDiagonal()*Y_hat).trace();
 		_paras._s =  s_upper / s_lower; 
 			
 		_paras._t = mu_x - _paras._s * _paras._R * mu_y;
 
-		T tr_f = TMatrix(X_hat.transpose()*
-			TVector(_corres.transpose()*TVector(_M).setOnes()).asDiagonal()*X_hat).trace();
+		T tr_f = TMatrix(X_hat.transpose()*_PT1.asDiagonal()*X_hat).trace();
 		T tr_b = TMatrix(A.transpose()*_paras._R).trace();
 		_paras._sigma2 = (tr_f - _paras._s * tr_b) / (N_P * D);
 
-		std::cout << std::endl;
+		/*std::cout << std::endl;
 		std::cout << _paras._R << std::endl;
 		std::cout << _paras._t << std::endl;
-		std::cout << _paras._s << std::endl;
+		std::cout << _paras._s << std::endl;*/
 
 	}
 

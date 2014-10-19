@@ -14,8 +14,10 @@ include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cpd)
 
-set(src_base cpd/Base)
-set(src_core cpd/Core)
+set(src_base cpd/base)
+set(src_core cpd/core)
+set(src_fast cpd/fast)
+set(src_3rdparty cpd/3rdparty/figtree)
 		 
 set(srcs_base 	${src_base}/vector.hpp
 				${src_base}/matrix.hpp
@@ -29,21 +31,33 @@ set(srcs_core	${src_core}/em.hpp
 				${src_core}/cpd_rigid.hpp
 				${src_core}/cpd_affine.hpp
 				${src_core}/cpd_nonrigid.hpp)
+
+set(srcs_fast		${src_fast}/fgt_wrapper.hpp)
+
+set(srcs_3rdparty	${src_3rdparty}/figtree.h
+					${src_3rdparty}/figtree_internal.h
+					${src_3rdparty}/kCenterClustering.h
+					${src_3rdparty}/figtree.cpp
+					${src_3rdparty}/kCenterClustering.cpp)
 				
 set(srcs_test	cpd/test.cpp)
 
-set(srcs		${srcs_base} ${srcs_core} ${srcs_test})
+set(srcs		${srcs_base} ${srcs_core} ${srcs_fast} ${srcs_3rdparty} ${srcs_test})
 
 
 #Organize the files
 set(Sources		"Source Files")
 
-set(srcfiles_base		${Sources}\\Base)
-set(srcfiles_core		${Sources}\\Core)
+set(srcfiles_base		${Sources}\\base)
+set(srcfiles_core		${Sources}\\core)
+set(srcfiles_fast		${Sources}\\fast)
+set(srcfiles_3rdparty	${Sources}\\3rdparty\\figtree)
 set(srcfiles_test		${Sources})
 
 source_group(${srcfiles_base} FILES ${srcs_base})
 source_group(${srcfiles_core} FILES ${srcs_core})
+source_group(${srcfiles_fast} FILES ${srcs_fast})
+source_group(${srcfiles_3rdparty} FILES ${srcs_3rdparty})
 source_group(${srcfiles_test} FILES ${srcs_test})
 
 add_executable(CPD ${srcs})

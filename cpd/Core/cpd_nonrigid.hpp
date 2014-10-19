@@ -5,9 +5,9 @@
 #include <vector>
 
 #include <Eigen/SVD>
-#include "Core/cpd_base.hpp"
-#include "Base/parameters.hpp"
-#include "Base/visualizer.hpp"
+#include "core/cpd_base.hpp"
+#include "base/parameters.hpp"
+#include "base/visualizer.hpp"
 
 namespace cpd
 {
@@ -27,6 +27,7 @@ namespace cpd
 		void e_step();
 		void m_step();
 		void align();
+		void correspondences();
 
 		void constructG();
 		T computeGaussianExp(size_t m, size_t n);
@@ -57,22 +58,13 @@ namespace cpd
 		size_t iter_num = 0;
 		T e_tol = 10 + _e_tol;
 		T e = 0;
-
-		_T = _model;
 		
 		initialization();
-
-		/*if (_vision == true)
-		{
-			vis = new Visualizer<T, D>();
-			vis->updateModel(_T);
-			vis->updateData(_data);
-			vis->show();
-		}*/
 
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
 			e_step();
+			m_step();
 
 			T old_e = e;
 			//std::cout << _corres << std::endl;
@@ -82,9 +74,6 @@ namespace cpd
 
 			std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
-			m_step();
-			align();	
-
 			/*if (_vision == true)
 				vis->updateModel(_T)*/;
 
@@ -93,7 +82,8 @@ namespace cpd
 		std::cout << "lastiter:" << iter_num << std::endl;
 		std::cout << "lasttol:" << e_tol << std::endl;
 		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
-		_model = _T;
+		
+		updateModel();
 
 		if (_vision == true)
 		{
@@ -103,6 +93,30 @@ namespace cpd
 			vis->show();
 		}
 		
+	}
+
+	template <typename T, int D>
+	void CPDNRigid<T, D>::correspondences()
+	{
+		_corres.setZero(_M, _N);
+
+		for (size_t n = 0; n < _N; n ++)
+		{
+			typename std::vector<T> t_exp;
+			T sum_exp = 0;
+			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+			for (size_t m = 0; m < _M; m ++)
+			{
+				T m_exp = computeGaussianExp(m, n);
+				t_exp.push_back(m_exp);
+				sum_exp += m_exp;
+			}
+
+			for (size_t m = 0; m < _M; m ++)
+			{
+				_corres(m, n) = t_exp.at(m) / (sum_exp + c);
+			}
+		}
 	}
 
 	template <typename T, int D>
@@ -129,42 +143,45 @@ namespace cpd
 		_paras._lamda = 0.5;
 		_paras._beta = 0.5;
 
+		initTransform();
 		constructG();
 	}
 
 	template<typename T, int D>
 	void CPDNRigid<T, D>::e_step()
 	{
-		_corres.setZero(_M, _N);
-
-		for (size_t n = 0; n < _N; n ++)
+		if (!_fgt)
 		{
-			typename std::vector<T> t_exp;
-			T sum_exp = 0;
+			correspondences();
+			_P1 = _corres * TVector(_N).setOnes();
+			_PT1 = _corres.transpose() * TVector(_M).setOnes();
+			_PX = _corres * _data;
+		}
+		else
+		{
 			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
-			for (size_t m = 0; m < _M; m ++)
+			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2));
+			TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
+
+			TMatrix aX = TMatrix::Zero(_N, D);
+			for (size_t i = 0; i < D; i ++)
 			{
-				T m_exp = computeGaussianExp(m, n);
-				t_exp.push_back(m_exp);
-				sum_exp += m_exp;
+				aX.col(i) = _data.col(i).cwiseProduct(a);
 			}
 
-			for (size_t m = 0; m < _M; m ++)
-			{
-				_corres(m, n) = t_exp.at(m) / (sum_exp + c);
-			}
+			_PT1 = TVector(_N).setOnes() - c * a;
+			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2));
+			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2));
 		}
 	}
 
 	template<typename T, int D>
 	void CPDNRigid<T, D>::m_step()
 	{
-		T N_P = _corres.sum();
-		TVector P_1 = _corres * TVector(_N).setOnes();
-		TVector PT_1 = _corres.transpose() * TVector(_M).setOnes();
+		T N_P = _P1.sum();
 
-		TMatrix A = (P_1.asDiagonal()*_G + _paras._lamda*_paras._sigma2*TMatrix::Identity(_M, _M));
-		TMatrix B = _corres * _data - P_1.asDiagonal() * _model;
+		TMatrix A = (_P1.asDiagonal()*_G + _paras._lamda*_paras._sigma2*TMatrix::Identity(_M, _M));
+		TMatrix B = _PX - _P1.asDiagonal() * _model;
 
 		for (size_t i = 0; i < D; i ++)
 		{
@@ -172,17 +189,17 @@ namespace cpd
 			_paras._W.col(i) = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
 		}
 
-		_T = _model + _G * _paras._W;
+		align();
 	
-		_paras._sigma2 = 1/(N_P*D) * ((_data.transpose()*PT_1.asDiagonal()*_data).trace() -
-			2*((_corres*_data).transpose()*_T).trace() + (_T.transpose()*P_1.asDiagonal()*_T).trace());
+		_paras._sigma2 = 1/(N_P*D) * ((_data.transpose()*_PT1.asDiagonal()*_data).trace() -
+			2*(_PX.transpose()*_T).trace() + (_T.transpose()*_P1.asDiagonal()*_T).trace());
 
 	}
 
 	template<typename T, int D>
 	void CPDNRigid<T, D>::align()
 	{
-
+		_T = _model + _G * _paras._W;
 	}
 
 	template <typename T, int D>

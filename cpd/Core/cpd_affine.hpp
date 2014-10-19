@@ -1,7 +1,7 @@
 #ifndef CPD_AFFINE_HPP
 #define CPD_AFFINE_HPP
 
-#include "Core/cpd_base.hpp"
+#include "core/cpd_base.hpp"
 
 namespace cpd
 {

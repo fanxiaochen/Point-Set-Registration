@@ -1,7 +1,7 @@
 #ifndef PARAMETERS_HPP
 #define PARAMETERS_HPP
 
-#include "Base/matrix.hpp"
+#include "base/matrix.hpp"
 
 namespace cpd
 {

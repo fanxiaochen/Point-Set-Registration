@@ -1,7 +1,7 @@
 #ifndef EM_HPP
 #define EM_HPP
 
-#include "Base/matrix.hpp"
+#include "base/matrix.hpp"
 
 namespace cpd
 {

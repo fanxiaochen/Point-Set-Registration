@@ -3,7 +3,7 @@
 
 #include <fstream>
 #include <string>
-#include "Base/matrix.hpp"
+#include "base/matrix.hpp"
 
 namespace cpd
 {
