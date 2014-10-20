@@ -38,6 +38,8 @@ namespace cpd
 	private:
 		NRigidParas<T, D>	_paras;
 		TMatrix				_G;
+		TMatrix				_Q;
+		TMatrix				_S;
 	};
 }
 
@@ -159,6 +161,9 @@ namespace cpd
 
 		initTransform();
 		constructG();
+		
+		if (_lr)
+			lr_approximate<T, D>(_G, _Q, _S, _K);
 	}
 
 	template<typename T, int D>
@@ -202,11 +207,8 @@ namespace cpd
 		}
 		else
 		{
-			TMatrix Q, S;
-			lr_approximate<T, D>(_G, Q, S, _K);
-
 			TMatrix A1 = ((1/(_paras._lamda*_paras._sigma2))*_P1).asDiagonal();
-			TMatrix A2 = Q * (S.inverse() + Q.transpose()*A1*Q).inverse() * Q.transpose();
+			TMatrix A2 = _Q * (_S.inverse() + _Q.transpose()*A1*_Q).inverse() * _Q.transpose();
 			TMatrix A_inv = A1 - A1 * A2 * A1;
 			TMatrix B = _P1.cwiseInverse().asDiagonal() * _PX - _model;
 			_paras._W = A_inv * B;

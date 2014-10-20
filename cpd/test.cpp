@@ -35,8 +35,8 @@ int main()
 	reg->setEnergyTolerance(1e-5);
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
-	//reg->setLowRankFlag(true);
-	//reg->setKLowRank(10);
+	reg->setLowRankFlag(true);
+	reg->setKLowRank(10);
 	reg->run();
 
 	/*std::cout << "results:" << std::endl;
