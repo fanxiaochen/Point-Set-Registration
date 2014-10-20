@@ -15,6 +15,8 @@ namespace cpd
 		void setEnergyTolerance(T e_tol);
 		void setOutlierWeight(T w);
 		void setFgtFlag(bool fgt);
+		void setLowRankFlag(bool lr);
+		void setKLowRank(int K);
 
 		inline const TMatrix& getTransform(){ return _T; } 
 		inline const TMatrix& getCorrespondences(){ return _corres; }
@@ -48,6 +50,8 @@ namespace cpd
 		TMatrix		_PX;
 
 		bool		_fgt;
+		bool		_lr;
+		int			_K;
 	};
 }
 
@@ -56,7 +60,7 @@ namespace cpd
 	template <typename T, int D>
 	CPDBase<T, D>::CPDBase()
 		: _iter_num(0), _v_tol(0), _e_tol(0), _w(0),
-		_M(0), _N(0), _fgt(false)
+		_M(0), _N(0), _fgt(false), _lr(false), _K(0)
 	{}
 
 	template <typename T, int D>
@@ -90,6 +94,18 @@ namespace cpd
 	void CPDBase<T, D>::setFgtFlag(bool fgt)
 	{
 		_fgt = fgt;
+	}
+
+	template <typename T, int D>
+	void CPDBase<T, D>::setLowRankFlag(bool lr)
+	{
+		_lr = lr;
+	}
+
+	template <typename T, int D>
+	void CPDBase<T, D>::setKLowRank(int K)
+	{
+		_K = K;
 	}
 
 	template <typename T, int D>

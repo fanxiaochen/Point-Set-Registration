@@ -18,6 +18,8 @@ namespace cpd
 		CPDNRigid();
 		virtual ~CPDNRigid();
 
+		void setLamda(T lamda);
+		void setBeta(T beta);
 		inline NRigidParas<T, D>& getParameters(){ return _paras; }
 
 		void run();
@@ -49,6 +51,18 @@ namespace cpd
 
 	template <typename T, int D>
 	CPDNRigid<T, D>::~CPDNRigid(){}
+
+	template <typename T, int D>
+	void CPDNRigid<T, D>::setLamda(T lamda)
+	{
+		_paras._lamda = lamda;
+	}
+
+	template <typename T, int D>
+	void CPDNRigid<T, D>::setBeta(T beta)
+	{
+		_paras._beta = beta;
+	}
 
 	template <typename T, int D>
 	void CPDNRigid<T, D>::run()
@@ -140,8 +154,8 @@ namespace cpd
 		}
 		_paras._sigma2 = sigma_sum / (D*_M*_N);
 
-		_paras._lamda = 0.5;
-		_paras._beta = 0.5;
+		_paras._lamda = 2;
+		_paras._beta = 2;
 
 		initTransform();
 		constructG();
@@ -180,13 +194,22 @@ namespace cpd
 	{
 		T N_P = _P1.sum();
 
-		TMatrix A = (_P1.asDiagonal()*_G + _paras._lamda*_paras._sigma2*TMatrix::Identity(_M, _M));
-		TMatrix B = _PX - _P1.asDiagonal() * _model;
-
-		for (size_t i = 0; i < D; i ++)
+		if (!_lr)
 		{
-			TVector b = B.col(i);
-			_paras._W.col(i) = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
+			TMatrix A = (_P1.asDiagonal()*_G + _paras._lamda*_paras._sigma2*TMatrix::Identity(_M, _M));
+			TMatrix B = _PX - _P1.asDiagonal() * _model;
+			_paras._W = A.inverse() * B;
+		}
+		else
+		{
+			TMatrix Q, S;
+			lr_approximate<T, D>(_G, Q, S, _K);
+
+			TMatrix A1 = ((1/(_paras._lamda*_paras._sigma2))*_P1).asDiagonal();
+			TMatrix A2 = Q * (S.inverse() + Q.transpose()*A1*Q).inverse() * Q.transpose();
+			TMatrix A_inv = A1 - A1 * A2 * A1;
+			TMatrix B = _P1.cwiseInverse().asDiagonal() * _PX - _model;
+			_paras._W = A_inv * B;
 		}
 
 		align();

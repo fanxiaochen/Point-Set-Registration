@@ -15,27 +15,29 @@ using namespace std;
 
 int main()
 {
-	//MatrixType<double, 2>::MatrixD model(91,2), data(91,2);
-	////model << 1,2,
-	////		4,5,
-	////		7,8,
-	////		10,10;
-	////data << 1,2,
-	////		4,5,
-	////		7,8,
-	////		10,10;
-	//////data = - model;
-	//getInputData<double, 2>("y-nonrigid.txt", "x-nonrigid.txt", model, data);
+	MatrixType<double, 2>::MatrixD model(91,2), data(91,2);
+	//model << 1,2,
+	//		4,5,
+	//		7,8,
+	//		10,10;
+	//data << 1,2,
+	//		4,5,
+	//		7,8,
+	//		10,10;
+	////data = - model;
+	getInputData<double, 2>("y-nonrigid.txt", "x-nonrigid.txt", model, data);
 
-	//CPDNRigid<double, 2>* reg = new CPDNRigid<double, 2>();
-	//reg->setInputData(model, data);
-	//reg->setVision(true);
-	//reg->setIterativeNumber(100);
-	//reg->setVarianceTolerance(1e-5);
-	//reg->setEnergyTolerance(1e-5);
-	//reg->setOutlierWeight(0.1);
-	//reg->setFgtFlag(true);
-	//reg->run();
+	CPDNRigid<double, 2>* reg = new CPDNRigid<double, 2>();
+	reg->setInputData(model, data);
+	reg->setVision(true);
+	reg->setIterativeNumber(100);
+	reg->setVarianceTolerance(1e-5);
+	reg->setEnergyTolerance(1e-5);
+	reg->setOutlierWeight(0.1);
+	reg->setFgtFlag(true);
+	//reg->setLowRankFlag(true);
+	//reg->setKLowRank(10);
+	reg->run();
 
 	/*std::cout << "results:" << std::endl;
 	std::cout << "model:" << std::endl;
@@ -72,7 +74,7 @@ int main()
 	std::cout << a[0] << std::endl;
 	std::cout << b[0] << std::endl;*/
 
-	MatrixXd A = MatrixXd::Random(3,3);
+	/*MatrixXd A = MatrixXd::Random(3,3);
 	A << 1,4,2,
 		4,2,1,
 		2,1,1;
@@ -94,6 +96,6 @@ int main()
 	int K = 2;
 	lr_approximate<double, 2>(G, Q, S, K);
 	std::cout << Q << std::endl;
-	std::cout << S << std::endl;
+	std::cout << S << std::endl;*/
 
 }

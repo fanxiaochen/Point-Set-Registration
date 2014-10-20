@@ -45,7 +45,6 @@ namespace cpd
 		//typename Eigen::EigenSolver<MatrixType<T, D>::Matrix> es(G);
 		typename Eigen::EigenSolver<TMatrix> es(G);
 
-		std::cout << es.eigenvalues() << std::endl;
 		const typename EigenType<T, D>::EigenvalueType& eigen_values = es.eigenvalues();
 		const typename EigenType<T, D>::EigenvectorsType& eigen_vectors = es.eigenvectors();
 		k_extract<T, D>(eigen_values, eigen_vectors, Q, S, K);
