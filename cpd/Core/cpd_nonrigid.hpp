@@ -156,6 +156,11 @@ namespace cpd
 		}
 		_paras._sigma2 = sigma_sum / (D*_M*_N);
 
+		/*T sigma_sum = _M*(_data.transpose()*_data).trace() + 
+			_N*(_model.transpose()*_model).trace() - 
+			2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
+		_paras._sigma2 = sigma_sum / (D*_N*_M);*/
+
 		_paras._lamda = 2;
 		_paras._beta = 2;
 

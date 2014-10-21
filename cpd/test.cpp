@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-	MatrixType<double, 2>::MatrixD model(91,2), data(91,2);
+	MatrixType<double, 3>::MatrixD model(392,3), data(392,3);
 	//model << 1,2,
 	//		4,5,
 	//		7,8,
@@ -25,9 +25,9 @@ int main()
 	//		7,8,
 	//		10,10;
 	////data = - model;
-	getInputData<double, 2>("y-nonrigid.txt", "x-nonrigid.txt", model, data);
+	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
 
-	CPDNRigid<double, 2>* reg = new CPDNRigid<double, 2>();
+	CPDNRigid<double, 3>* reg = new CPDNRigid<double, 3>();
 	reg->setInputData(model, data);
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
@@ -35,8 +35,8 @@ int main()
 	reg->setEnergyTolerance(1e-5);
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
-	reg->setLowRankFlag(true);
-	reg->setKLowRank(10);
+	//reg->setLowRankFlag(true);
+	//reg->setKLowRank(10);
 	reg->run();
 
 	/*std::cout << "results:" << std::endl;
