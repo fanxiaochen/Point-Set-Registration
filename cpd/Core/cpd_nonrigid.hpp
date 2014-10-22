@@ -22,6 +22,8 @@ namespace cpd
 		void setBeta(T beta);
 		inline NRigidParas<T, D>& getParameters(){ return _paras; }
 
+		inline TMatrix& getG(){ return _G; }
+
 		void run();
 
 	private:
@@ -144,7 +146,7 @@ namespace cpd
 
 		_paras._W = TMatrix::Zero(_M, D);
 
-		T sigma_sum = 0;
+		/*T sigma_sum = 0;
 		for (size_t m = 0; m < _M; m ++)
 		{
 			TVector model_row = _model.row(m);
@@ -154,12 +156,12 @@ namespace cpd
 				sigma_sum += TVector(model_row - data_row).squaredNorm();
 			}
 		}
-		_paras._sigma2 = sigma_sum / (D*_M*_N);
+		_paras._sigma2 = sigma_sum / (D*_M*_N);*/
 
-		/*T sigma_sum = _M*(_data.transpose()*_data).trace() + 
+		T sigma_sum = _M*(_data.transpose()*_data).trace() + 
 			_N*(_model.transpose()*_model).trace() - 
 			2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
-		_paras._sigma2 = sigma_sum / (D*_N*_M);*/
+		_paras._sigma2 = sigma_sum / (D*_N*_M);
 
 		_paras._lamda = 2;
 		_paras._beta = 2;

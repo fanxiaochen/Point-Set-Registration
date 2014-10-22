@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-	MatrixType<double, 3>::MatrixD model(392,3), data(392,3);
+	MatrixType<double, 3>::MatrixD model, data;
 	//model << 1,2,
 	//		4,5,
 	//		7,8,
@@ -25,18 +25,19 @@ int main()
 	//		7,8,
 	//		10,10;
 	////data = - model;
-	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
+//	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
+	getInputData<double, 3>("Y-m.txt", "X-m.txt", model, data);
 
 	CPDNRigid<double, 3>* reg = new CPDNRigid<double, 3>();
 	reg->setInputData(model, data);
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
 	reg->setVarianceTolerance(1e-5);
-	reg->setEnergyTolerance(1e-5);
+	reg->setEnergyTolerance(1e-3);
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
-	//reg->setLowRankFlag(true);
-	//reg->setKLowRank(10);
+	reg->setLowRankFlag(true);
+	reg->setKLowRank(10);
 	reg->run();
 
 	/*std::cout << "results:" << std::endl;
@@ -73,15 +74,15 @@ int main()
 
 	std::cout << a[0] << std::endl;
 	std::cout << b[0] << std::endl;*/
-
-	/*MatrixXd A = MatrixXd::Random(3,3);
-	A << 1,4,2,
+	//MatrixType<double, 3>::Matrix& G = reg->getG();
+	//MatrixXd A = G;
+	/*A << 1,4,2,
 		4,2,1,
-		2,1,1;
-	cout << "Here is a random 6x6 matrix, A:" << endl << A << endl << endl;
-	EigenSolver<MatrixXd> es(A);
-	cout << "The eigenvalues of A are:" << endl << es.eigenvalues() << endl;
-	cout << "The matrix of eigenvectors, V, is:" << endl << es.eigenvectors() << endl << endl;
+		2,1,1;*/
+	//cout << "Here is a random 6x6 matrix, A:" << endl << A << endl << endl;
+	//EigenSolver<MatrixXd> es(A);
+	//cout << "The eigenvalues of A are:" << endl << es.eigenvalues() << endl;
+	/*cout << "The matrix of eigenvectors, V, is:" << endl << es.eigenvectors() << endl << endl;
 	complex<double> lambda = es.eigenvalues()[0];
 	cout << "Consider the first eigenvalue, lambda = " << lambda << endl;
 	VectorXcd v = es.eigenvectors().col(0);
@@ -89,9 +90,9 @@ int main()
 	cout << "... and A * v = " << endl << A.cast<complex<double> >() * v << endl << endl;
 	MatrixXcd D = es.eigenvalues().asDiagonal();
 	MatrixXcd V = es.eigenvectors();
-	cout << "Finally, V * D * V^(-1) = " << endl << V * D * V.inverse() << endl;
+	cout << "Finally, V * D * V^(-1) = " << endl << V * D * V.inverse() << endl;*/
 
-	MatrixType<double, 2>::Matrix G = A;
+	/*MatrixType<double, 2>::Matrix G = A;
 	MatrixType<double, 2>::Matrix Q, S;
 	int K = 2;
 	lr_approximate<double, 2>(G, Q, S, K);
