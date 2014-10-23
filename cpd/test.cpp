@@ -26,7 +26,7 @@ int main()
 	//		10,10;
 	////data = - model;
 //	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
-	getInputData<double, 2>("y.txt", "x.txt", model, data);
+	getInputData<double, 2>("y-nonrigid.txt", "x-nonrigid.txt", model, data);
 
 	CPDNRigid<double, 2>* reg = new CPDNRigid<double, 2>();
 	reg->setInputData(model, data);

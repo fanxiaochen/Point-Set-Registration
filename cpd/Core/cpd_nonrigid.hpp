@@ -107,6 +107,7 @@ namespace cpd
 		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
 		
 		updateModel();
+		RenderThread<T, D>::instance()->cancel();
 
 		/*if (_vision == true)
 		{
