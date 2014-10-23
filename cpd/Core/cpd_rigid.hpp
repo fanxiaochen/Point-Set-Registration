@@ -7,7 +7,6 @@
 #include <Eigen/SVD>
 #include "core/cpd_base.hpp"
 #include "base/parameters.hpp"
-#include "base/visualizer.hpp"
 #include "fast/fgt_wrapper.hpp"
 
 namespace cpd
@@ -80,13 +79,13 @@ namespace cpd
 		
 		updateModel();
 
-		if (_vision == true)
+		/*if (_vision == true)
 		{
 			vis = new Visualizer<T, D>();
 			vis->updateModel(_T);
 			vis->updateData(_data);
 			vis->show();
-		}
+		}*/
 		
 	}
 

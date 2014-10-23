@@ -7,7 +7,7 @@
 #include <Eigen/SVD>
 #include "core/cpd_base.hpp"
 #include "base/parameters.hpp"
-#include "base/visualizer.hpp"
+#include "disp/render_thread.hpp"
 
 namespace cpd
 {
@@ -71,13 +71,18 @@ namespace cpd
 	template <typename T, int D>
 	void CPDNRigid<T, D>::run()
 	{
-		Visualizer<T, D>* vis;
-
 		size_t iter_num = 0;
 		T e_tol = 10 + _e_tol;
 		T e = 0;
 		
 		initialization();
+
+		if (_vision)
+		{
+			RenderThread<T, D>::instance()->updateModel(_model);
+			RenderThread<T, D>::instance()->updateData(_data);
+			RenderThread<T, D>::instance()->startThread();
+		}
 
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
@@ -92,8 +97,8 @@ namespace cpd
 
 			std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
-			/*if (_vision == true)
-				vis->updateModel(_T)*/;
+			if (_vision == true)
+				RenderThread<T, D>::instance()->updateModel(_T);
 
 			iter_num ++;	
 		}
@@ -103,13 +108,13 @@ namespace cpd
 		
 		updateModel();
 
-		if (_vision == true)
+		/*if (_vision == true)
 		{
 			vis = new Visualizer<T, D>();
 			vis->updateModel(_T);
 			vis->updateData(_data);
 			vis->show();
-		}
+		}*/
 		
 	}
 
