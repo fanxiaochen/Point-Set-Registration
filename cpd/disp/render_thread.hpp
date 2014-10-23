@@ -8,6 +8,7 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/StateSetManipulator>
+#include <osgGA/TrackballManipulator>
 
 namespace cpd
 {
@@ -30,8 +31,8 @@ namespace cpd
 		inline void getModel(){ return _model; }
 		inline void getData(){ return _data; }
 
-		void drawModel();
-		void drawData();
+		void updateModelGeometry();
+		void updateDataGeometry();
 
 	protected:
 		OpenThreads::Mutex _mutex;
@@ -57,7 +58,7 @@ namespace cpd
              dynamic_cast<osg::Geode*>(node);
 
           if(m_node)
-			  RenderThread<T, D>::instance()->drawModel();
+			  RenderThread<T, D>::instance()->updateModelGeometry();
           
           traverse(node, nv); 
        }
@@ -73,7 +74,7 @@ namespace cpd
              dynamic_cast<osg::Geode*>(node);
 
           if(d_node)
-			  RenderThread<T, D>::instance()->drawData();
+			  RenderThread<T, D>::instance()->updateDataGeometry();
           
           traverse(node, nv); 
        }
@@ -92,6 +93,8 @@ namespace cpd
 		_scene = new osg::Group;
 		_scene->addChild(_m_node);
 		_scene->addChild(_d_node);
+		updateModelGeometry();
+		updateDataGeometry();
 
 		_m_node->setUpdateCallback(new ModelCallback<T, D>);
 		_d_node->setUpdateCallback(new DataCallback<T, D>);
@@ -101,8 +104,20 @@ namespace cpd
 		viewer.setSceneData(_scene);
 
 		viewer.addEventHandler(new osgGA::StateSetManipulator(viewer.getCamera()->getOrCreateStateSet()));
-		viewer.addEventHandler(new osgViewer::StatsHandler);
-		viewer.addEventHandler(new osgViewer::WindowSizeHandler);
+		//viewer.addEventHandler(new osgViewer::StatsHandler);
+		//viewer.addEventHandler(new osgViewer::WindowSizeHandler);
+
+		//viewer.getCamera()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
+
+		
+		//viewer.setCameraManipulator(new osgGA::TrackballManipulator);
+
+		/*_scene->dirtyBound();
+		_m_node->dirtyBound();
+		_d_node->dirtyBound();*/
+
+		/*viewer.getCameraManipulator()->computeHomePosition(NULL);
+		viewer.home();*/
 
 		viewer.run();
 
@@ -129,7 +144,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void RenderThread<T, D>::drawModel()
+	void RenderThread<T, D>::updateModelGeometry()
 	{
 		if (D > 3)
 			std::cout << "can't visualize data higher than three dimension!" << std::endl;
@@ -170,7 +185,7 @@ namespace cpd
 		geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
 		osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-		normals->push_back(osg::Vec3(0.0f, 1.0f, 0.0f));
+		normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
 		geometry->setNormalArray(normals.get());
 		geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
 
@@ -183,7 +198,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	void RenderThread<T, D>::drawData()
+	void RenderThread<T, D>::updateDataGeometry()
 	{
 		if (D > 3)
 			std::cout << "can't visualize data higher than three dimension!" << std::endl;
@@ -224,7 +239,7 @@ namespace cpd
 		geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
 		osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-		normals->push_back(osg::Vec3(0.0f, 1.0f, 0.0f));
+		normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
 		geometry->setNormalArray(normals.get());
 		geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
 
