@@ -51,26 +51,35 @@ namespace cpd
 	template <typename T, int D>
 	void CPDRigid<T, D>::run()
 	{
-		Visualizer<T, D>* vis;
-
 		size_t iter_num = 0;
 		T e_tol = 10 + _e_tol;
 		T e = 0;
 		
 		initialization();
 
+		if (_vision)
+		{
+			RenderThread<T, D>::instance()->updateModel(_model);
+			RenderThread<T, D>::instance()->updateData(_data);
+			RenderThread<T, D>::instance()->startThread();
+		}
+
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
 			e_step();
-			m_step();
-			align();
 
 			T old_e = e;
 			//std::cout << _corres << std::endl;
 			e = energy();
 			e_tol = abs((e - old_e) / e);
 
-			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;	
+			m_step();
+			align();
+
+			if (_vision == true)
+				RenderThread<T, D>::instance()->updateModel(_T);
+			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
+
 			iter_num ++;	
 		}
 		/*std::cout << "lastiter:" << iter_num << std::endl;
@@ -78,7 +87,7 @@ namespace cpd
 		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;*/
 		
 		updateModel();
-
+		RenderThread<T, D>::instance()->cancel();
 		/*if (_vision == true)
 		{
 			vis = new Visualizer<T, D>();

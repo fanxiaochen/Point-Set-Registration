@@ -75,6 +75,7 @@ namespace cpd
 		T e_tol = 10 + _e_tol;
 		T e = 0;
 		
+		normalize();
 		initialization();
 
 		if (_vision)
@@ -87,15 +88,15 @@ namespace cpd
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
 			e_step();
-			m_step();
+			
 
 			T old_e = e;
-			//std::cout << _corres << std::endl;
-
 			e = energy();
+			e += _paras._lamda/2 * (_paras._W.transpose()*_G*_paras._W).trace();
 			e_tol = abs((e - old_e) / e);
 
-			std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
+			m_step();
+			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
 			if (_vision == true)
 				RenderThread<T, D>::instance()->updateModel(_T);
@@ -146,9 +147,6 @@ namespace cpd
 	template <typename T, int D>
 	void CPDNRigid<T, D>::initialization()
 	{
-		// determine data number
-		_M = _model.rows();
-		_N = _data.rows();
 
 		_paras._W = TMatrix::Zero(_M, D);
 

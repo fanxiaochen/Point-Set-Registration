@@ -30,6 +30,13 @@ namespace cpd
 		T _lamda;
 		T _beta;
 	};
+
+	template <typename T, int D>
+	struct Normal
+	{
+		TVector _means;
+		T _scale;
+	};
 }
 
 #endif
