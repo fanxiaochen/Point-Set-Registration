@@ -5,8 +5,11 @@
 #include <vector>
 
 #include <Eigen/SVD>
+
 #include "core/cpd_base.hpp"
 #include "base/parameters.hpp"
+#include "fast/fgt_wrapper.hpp"
+#include "fast/low_rank.hpp"
 #include "disp/render_thread.hpp"
 
 namespace cpd
@@ -18,7 +21,7 @@ namespace cpd
 		CPDNRigid();
 		virtual ~CPDNRigid();
 
-		void setLamda(T lamda);
+		void setLambda(T lambda);
 		void setBeta(T beta);
 		inline NRigidParas<T, D>& getParameters(){ return _paras; }
 
@@ -57,9 +60,9 @@ namespace cpd
 	CPDNRigid<T, D>::~CPDNRigid(){}
 
 	template <typename T, int D>
-	void CPDNRigid<T, D>::setLamda(T lamda)
+	void CPDNRigid<T, D>::setLambda(T lambda)
 	{
-		_paras._lamda = lamda;
+		_paras._lambda = lambda;
 	}
 
 	template <typename T, int D>
@@ -92,32 +95,20 @@ namespace cpd
 
 			T old_e = e;
 			e = energy();
-			e += _paras._lamda/2 * (_paras._W.transpose()*_G*_paras._W).trace();
+			e += _paras._lambda/2 * (_paras._W.transpose()*_G*_paras._W).trace();
 			e_tol = abs((e - old_e) / e);
 
 			m_step();
-			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
 			if (_vision == true)
 				RenderThread<T, D>::instance()->updateModel(_T);
 
 			iter_num ++;	
 		}
-		std::cout << "lastiter:" << iter_num << std::endl;
-		std::cout << "lasttol:" << e_tol << std::endl;
-		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;
 		
 		updateModel();
-		RenderThread<T, D>::instance()->cancel();
-
-		/*if (_vision == true)
-		{
-			vis = new Visualizer<T, D>();
-			vis->updateModel(_T);
-			vis->updateData(_data);
-			vis->show();
-		}*/
-		
+		denormalize();
+		RenderThread<T, D>::instance()->cancel();	
 	}
 
 	template <typename T, int D>
@@ -150,24 +141,12 @@ namespace cpd
 
 		_paras._W = TMatrix::Zero(_M, D);
 
-		/*T sigma_sum = 0;
-		for (size_t m = 0; m < _M; m ++)
-		{
-			TVector model_row = _model.row(m);
-			for (size_t n = 0; n < _N; n ++)
-			{
-				TVector data_row = _data.row(n);
-				sigma_sum += TVector(model_row - data_row).squaredNorm();
-			}
-		}
-		_paras._sigma2 = sigma_sum / (D*_M*_N);*/
-
 		T sigma_sum = _M*(_data.transpose()*_data).trace() + 
 			_N*(_model.transpose()*_model).trace() - 
 			2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
 		_paras._sigma2 = sigma_sum / (D*_N*_M);
 
-		_paras._lamda = 2;
+		_paras._lambda = 2;
 		_paras._beta = 2;
 
 		initTransform();
@@ -212,13 +191,13 @@ namespace cpd
 
 		if (!_lr)
 		{
-			TMatrix A = (_P1.asDiagonal()*_G + _paras._lamda*_paras._sigma2*TMatrix::Identity(_M, _M));
+			TMatrix A = (_P1.asDiagonal()*_G + _paras._lambda*_paras._sigma2*TMatrix::Identity(_M, _M));
 			TMatrix B = _PX - _P1.asDiagonal() * _model;
 			_paras._W = A.inverse() * B;
 		}
 		else
 		{
-			TMatrix A1 = ((1/(_paras._lamda*_paras._sigma2))*_P1).asDiagonal();
+			TMatrix A1 = ((1/(_paras._lambda*_paras._sigma2))*_P1).asDiagonal();
 			TMatrix A2 = _Q * (_S.inverse() + _Q.transpose()*A1*_Q).inverse() * _Q.transpose();
 			TMatrix A_inv = A1 - A1 * A2 * A1;
 			TMatrix B = _P1.cwiseInverse().asDiagonal() * _PX - _model;

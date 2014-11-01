@@ -27,7 +27,7 @@ namespace cpd
 	{
 		TMatrix _W;
 		T _sigma2;
-		T _lamda;
+		T _lambda;
 		T _beta;
 	};
 

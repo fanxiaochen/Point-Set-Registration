@@ -5,9 +5,11 @@
 #include <vector>
 
 #include <Eigen/SVD>
+
 #include "core/cpd_base.hpp"
 #include "base/parameters.hpp"
 #include "fast/fgt_wrapper.hpp"
+#include "disp/render_thread.hpp"
 
 namespace cpd
 {
@@ -55,6 +57,7 @@ namespace cpd
 		T e_tol = 10 + _e_tol;
 		T e = 0;
 		
+		normalize();
 		initialization();
 
 		if (_vision)
@@ -69,7 +72,6 @@ namespace cpd
 			e_step();
 
 			T old_e = e;
-			//std::cout << _corres << std::endl;
 			e = energy();
 			e_tol = abs((e - old_e) / e);
 
@@ -78,30 +80,18 @@ namespace cpd
 
 			if (_vision == true)
 				RenderThread<T, D>::instance()->updateModel(_T);
-			//std::cout << "iter = " << iter_num << " e_tol = " << e_tol << " sigma2 = " << _paras._sigma2 << std::endl;
 
 			iter_num ++;	
 		}
-		/*std::cout << "lastiter:" << iter_num << std::endl;
-		std::cout << "lasttol:" << e_tol << std::endl;
-		std::cout << "lastsigma:" << _paras._sigma2 << std::endl;*/
 		
 		updateModel();
-		RenderThread<T, D>::instance()->cancel();
-		/*if (_vision == true)
-		{
-			vis = new Visualizer<T, D>();
-			vis->updateModel(_T);
-			vis->updateData(_data);
-			vis->show();
-		}*/
-		
+		denormalize();
+		RenderThread<T, D>::instance()->cancel();		
 	}
 
 	template <typename T, int D>
 	void CPDRigid<T, D>::initialization()
 	{
-
 		// determine data number
 		_M = _model.rows();
 		_N = _data.rows();
@@ -171,10 +161,6 @@ namespace cpd
 			_PT1 = TVector(_N).setOnes() - c * a;
 			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2));
 			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2));
-
-			//std::cout << "_P1:" << std::endl << _P1 << std::endl;
-			////std::cout << "_PT1:" << std::endl << _PT1 << std::endl;
-			//std::cout << "_PX:" << std::endl << _PX << std::endl;
 		}
 	}
 
@@ -183,24 +169,14 @@ namespace cpd
 	{
 		T N_P = _P1.sum();
 
-		//std::cout << energy() << std::endl;
-		/*std::cout << _P1 << std::endl;
-		std::cout << _PT1 << std::endl;*/
-
 		TVector mu_x = _data.transpose() * _PT1 / N_P;
 		TVector mu_y = _model.transpose() * _P1 / N_P;
 
-		/*std::cout << mu_x << std::endl;
-		std::cout << mu_y << std::endl;*/
-
 		TMatrixD X_hat = _data - TMatrix(TVector(_N).setOnes() * mu_x.transpose());
 		TMatrixD Y_hat = _model - TMatrix(TVector(_M).setOnes() * mu_y.transpose());
-		//TMatrix A = X_hat.transpose() * _corres.transpose() * Y_hat;
 
 		TMatrix A = (_PX-_P1*mu_x.transpose()).transpose() * 
 			(_model - TMatrix(TVector(_M).setOnes() * mu_y.transpose()));
-
-		//std::cout << A << std::endl;
 
 		Eigen::JacobiSVD<TMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
 		TMatrix U = svd.matrixU();
@@ -222,11 +198,6 @@ namespace cpd
 		T tr_b = TMatrix(A.transpose()*_paras._R).trace();
 		_paras._sigma2 = (tr_f - _paras._s * tr_b) / (N_P * D);
 
-		/*std::cout << std::endl;
-		std::cout << _paras._R << std::endl;
-		std::cout << _paras._t << std::endl;
-		std::cout << _paras._s << std::endl;*/
-
 	}
 
 	template <typename T, int D>
@@ -234,8 +205,6 @@ namespace cpd
 	{
 		_T = (_paras._s) * (_model) * (_paras._R).transpose() + 
 			TVector(_M).setOnes() * (_paras._t).transpose();
-
-		//std::cout << *_model << std::endl;
 	}
 
 	template <typename T, int D>
@@ -247,7 +216,7 @@ namespace cpd
 	}
 
 	template <typename T, int D>
-	T CPDRigid<T, D>::energy() // error occurs
+	T CPDRigid<T, D>::energy() 
 	{
 		T e = 0;
 		

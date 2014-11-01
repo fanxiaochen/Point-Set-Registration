@@ -26,7 +26,7 @@ int main()
 	//		10,10;
 	////data = - model;
 //	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
-	getInputData<double, 3>("lily-0.txt", "lily-5.txt", model, data);
+	getInputData<double, 3>("lily-5.txt", "lily-30.txt", model, data);
 
 	CPDNRigid<double, 3>* reg = new CPDNRigid<double, 3>();
 	reg->setInputData(model, data);
@@ -36,8 +36,8 @@ int main()
 	reg->setEnergyTolerance(1e-3);
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
-	reg->setLowRankFlag(true);
-	reg->setKLowRank(10);
+	/*reg->setLowRankFlag(true);
+	reg->setKLowRank(10);*/
 	reg->run();
 
 	/*std::cout << "results:" << std::endl;

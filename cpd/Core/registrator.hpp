@@ -21,11 +21,6 @@ namespace cpd
 
 		virtual void run() = 0;
 
-	/*private:
-		void rigid();
-		void affine();
-		void nonrigid();*/
-
 	protected:
 		TMatrixD			_model;
 		TMatrixD			_data;
@@ -67,45 +62,6 @@ namespace cpd
 	{
 		_vision = vision;
 	}
-
-	/*template <typename T, int D>
-	void Registrator<T, D>::run()
-	{
-		if (_type == EMPTY)
-			std::cout << "Please set the type of the registration!" << std::endl;
-		else if (_type == RIGID)
-			rigid();
-		else if (_type == AFFINE)
-			affine();
-		else if (_type == NONRIGID)
-			nonrigid();
-		else
-			std::cout << "Please check your registration type setting!" << std::endl;
-	}*/
-
-	//template <typename T, int D>
-	//void Registrator<T, D>::rigid()
-	//{
-	//	CPDRigid<T, D> cpd;
-	//	cpd.setInputData(&_model, &_data);
-	//	cpd.apply();
-	//}
-
-	//template <typename T, int D>
-	//void Registrator<T, D>::affine()
-	//{
-	//	/*CPDAffine<T, D> cpd;
-	//	cpd.setInputData(&_model, &_data);
-	//	cpd.apply();*/
-	//}
-
-	//template <typename T, int D>
-	//void Registrator<T, D>::nonrigid()
-	//{
-	//	/*CPDNRigid<T, D> cpd;
-	//	cpd.setInputData(&_model, &_data);
-	//	cpd.apply();*/
-	//}
 }
 
 #endif

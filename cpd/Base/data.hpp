@@ -28,14 +28,7 @@ namespace cpd
 		size_t i = 0, j = 0;
 		while (fin_m >> tmp)
 		{
-			/*model(i, j%D) = tmp;
-			if (++j%D == 0)
-			{
-				++ i;
-				j = 0;
-			}*/
-			m_values.push(tmp);
-				
+			m_values.push(tmp);		
 		}
 
 		std::queue<T> d_values;
@@ -44,12 +37,6 @@ namespace cpd
 		j = 0;
 		while (fin_d >> tmp)
 		{
-			/*data(i, j%D) = tmp;
-			if (++j%D == 0)
-			{
-				++ i;
-				j = 0;
-			}*/
 			d_values.push(tmp);
 		}
 

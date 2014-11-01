@@ -2,6 +2,7 @@
 #define CPD_BASE_HPP
 
 #include "base/parameters.hpp"
+#include "core/registrator.hpp"
 
 namespace cpd
 {

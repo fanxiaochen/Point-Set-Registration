@@ -20,13 +20,11 @@ set(src_fast cpd/fast)
 set(src_disp cpd/disp)
 set(src_3rdparty cpd/3rdparty/figtree)
 		 
-set(srcs_base 	${src_base}/vector.hpp
-				${src_base}/matrix.hpp
+set(srcs_base	${src_base}/matrix.hpp
 				${src_base}/parameters.hpp
 				${src_base}/data.hpp)
 
-set(srcs_core	${src_core}/em.hpp
-				${src_core}/registrator.hpp
+set(srcs_core	${src_core}/registrator.hpp
 				${src_core}/cpd_base.hpp
 				${src_core}/cpd_rigid.hpp
 				${src_core}/cpd_affine.hpp
