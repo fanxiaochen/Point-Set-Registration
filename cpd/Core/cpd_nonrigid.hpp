@@ -1,6 +1,8 @@
 #ifndef CPD_NRIGID_HPP
 #define CPD_NRIGID_HPP
 
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 #include <vector>
 

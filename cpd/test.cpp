@@ -15,6 +15,7 @@ using namespace std;
 
 int main()
 {
+
 	MatrixType<double, 3>::MatrixD model, data;
 	//model << 1,2,
 	//		4,5,
@@ -39,6 +40,12 @@ int main()
 	/*reg->setLowRankFlag(true);
 	reg->setKLowRank(10);*/
 	reg->run();
+
+	/*RenderThread<double, 3>::instance()->updateModel(reg->getModel());
+	RenderThread<double, 3>::instance()->updateData(data);
+	RenderThread<double, 3>::instance()->startThread();*/
+
+	std::cout << reg->getModel() << std::endl;
 
 	/*std::cout << "results:" << std::endl;
 	std::cout << "model:" << std::endl;

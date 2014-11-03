@@ -146,7 +146,7 @@ namespace cpd
 	template <typename T, int D>
 	void CPDBase<T, D>::denormalize()
 	{
-		_model = _model * _normal_model._scale + _normal_model._means.transpose().replicate(_M, 1);
+		_model = _model * _normal_data._scale + _normal_data._means.transpose().replicate(_M, 1);
 		_data = _data * _normal_data._scale + _normal_data._means.transpose().replicate(_N, 1);
 
 	}
