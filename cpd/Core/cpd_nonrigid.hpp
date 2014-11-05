@@ -122,7 +122,7 @@ namespace cpd
 		{
 			typename std::vector<T> t_exp;
 			T sum_exp = 0;
-			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
 			for (size_t m = 0; m < _M; m ++)
 			{
 				T m_exp = computeGaussianExp(m, n);
@@ -170,7 +170,7 @@ namespace cpd
 		}
 		else
 		{
-			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
 			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2));
 			TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
 
@@ -232,7 +232,7 @@ namespace cpd
 				sp += computeGaussianExp(m, n);
 			}
 
-			sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (_M/_N);
+			sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
 
 			e += -log(sp);
 

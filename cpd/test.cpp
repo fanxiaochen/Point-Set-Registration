@@ -38,7 +38,7 @@ int main()
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
 	reg->setLowRankFlag(true);
-	reg->setKLowRank(10);
+	reg->setKLowRank(50);
 	reg->run();
 
 	/*RenderThread<double, 3>::instance()->updateModel(reg->getModel());
