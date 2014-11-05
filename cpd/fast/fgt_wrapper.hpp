@@ -16,9 +16,9 @@ namespace cpd
 		int ifgtTruncMethod = FIGTREE_TRUNC_CLUSTER,
 		int verbose = 0)
 	{
-		typename MatrixType<double, D>::MatrixD x_r = x;
-		typename MatrixType<double, D>::MatrixD y_r = y;
-		typename MatrixType<double, D>::Matrix q_r = q.transpose();
+		typename MatrixType<double, D>::MatrixD x_r = x.cast<double>();
+		typename MatrixType<double, D>::MatrixD y_r = y.cast<double>();
+		typename MatrixType<double, D>::Matrix q_r = q.cast<double>().transpose();
 
 		int d = D;
 		int N = x_r.rows();
@@ -37,7 +37,7 @@ namespace cpd
 
 		figtree(d, N, M, W, X, h, Q, Y, epsilon, G.data(), evalMethod, ifgtParamMethod, ifgtTruncMethod, verbose);
 
-		TMatrix g = G.transpose();
+		TMatrix g = G.cast<T>().transpose();
 		//g.data() = &G;
 		//std::cout << g << std::endl;
 		return g;
