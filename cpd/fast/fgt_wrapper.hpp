@@ -32,14 +32,10 @@ namespace cpd
 
 		typename MatrixType<double, D>::Matrix G(W, M);
 
-		/*T *G = new T[W*M];
-		memset(G, 0, sizeof(T)*W*M);*/
-
 		figtree(d, N, M, W, X, h, Q, Y, epsilon, G.data(), evalMethod, ifgtParamMethod, ifgtTruncMethod, verbose);
 
 		TMatrix g = G.cast<T>().transpose();
-		//g.data() = &G;
-		//std::cout << g << std::endl;
+
 		return g;
 	}
 }

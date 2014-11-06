@@ -56,6 +56,9 @@ namespace cpd
 	CPDNRigid<T, D>::CPDNRigid()
 	{
 		_type = NONRIGID;
+
+        _paras._lambda = 2;
+        _paras._beta = 2;
 	}
 
 	template <typename T, int D>
@@ -92,9 +95,9 @@ namespace cpd
 
 		while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
 		{
+
 			e_step();
 			
-
 			T old_e = e;
 			e = energy();
 			e += _paras._lambda/2 * (_paras._W.transpose()*_G*_paras._W).trace();
@@ -148,9 +151,6 @@ namespace cpd
 			2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
 		_paras._sigma2 = sigma_sum / (D*_N*_M);
 
-		_paras._lambda = 2;
-		_paras._beta = 2;
-
 		initTransform();
 		constructG();
 		
@@ -171,7 +171,7 @@ namespace cpd
 		else
 		{
 			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
-			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2));
+			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2), _fgt_eps);
 			TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
 
 			TMatrix aX = TMatrix::Zero(_N, D);
@@ -181,8 +181,8 @@ namespace cpd
 			}
 
 			_PT1 = TVector(_N).setOnes() - c * a;
-			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2));
-			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2));
+			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2), _fgt_eps);
+			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2), _fgt_eps);
 		}
 	}
 
@@ -207,7 +207,7 @@ namespace cpd
 		}
 
 		align();
-	
+
 		_paras._sigma2 = 1/(N_P*D) * ((_data.transpose()*_PT1.asDiagonal()*_data).trace() -
 			2*(_PX.transpose()*_T).trace() + (_T.transpose()*_P1.asDiagonal()*_T).trace());
 

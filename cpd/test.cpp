@@ -37,6 +37,7 @@ int main()
 	reg->setEnergyTolerance(1e-3);
 	reg->setOutlierWeight(0.1);
 	reg->setFgtFlag(true);
+    reg->setFgtEpsilon(1e-4);
 	reg->setLowRankFlag(true);
 	reg->setKLowRank(50);
 	reg->run();

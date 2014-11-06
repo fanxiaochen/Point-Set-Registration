@@ -18,6 +18,7 @@ namespace cpd
 		void setEnergyTolerance(T e_tol);
 		void setOutlierWeight(T w);
 		void setFgtFlag(bool fgt);
+        void setFgtEpsilon(T fgt_eps);
 		void setLowRankFlag(bool lr);
 		void setKLowRank(int K);
 
@@ -54,6 +55,8 @@ namespace cpd
 		TMatrix		_PX;
 
 		bool		_fgt;
+        T           _fgt_eps;
+
 		bool		_lr;
 		int			_K;
 
@@ -67,7 +70,7 @@ namespace cpd
 	template <typename T, int D>
 	CPDBase<T, D>::CPDBase()
 		: _iter_num(0), _v_tol(0), _e_tol(0), _w(0),
-		_fgt(false), _lr(false), _K(0)
+		_fgt(false), _fgt_eps(1e-3), _lr(false), _K(0)
 	{}
 
 	template <typename T, int D>
@@ -102,6 +105,12 @@ namespace cpd
 	{
 		_fgt = fgt;
 	}
+
+    template <typename T, int D>
+    void CPDBase<T, D>::setFgtEpsilon(T fgt_eps)
+    {
+        _fgt_eps = fgt_eps;
+    }
 
 	template <typename T, int D>
 	void CPDBase<T, D>::setLowRankFlag(bool lr)

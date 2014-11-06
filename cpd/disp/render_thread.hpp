@@ -8,7 +8,6 @@
 #include <osgViewer/Viewer>
 #include <osgViewer/ViewerEventHandlers>
 #include <osgGA/StateSetManipulator>
-#include <osgGA/TrackballManipulator>
 
 namespace cpd
 {
@@ -45,7 +44,6 @@ namespace cpd
 		osg::ref_ptr<osg::Group> _scene;
 
 		bool _done;
-		bool _dirty;
 	};
 
 	template <typename T, int D>
@@ -87,7 +85,7 @@ namespace cpd
 	template <typename T, int D>
 	void RenderThread<T, D>::run()
 	{
-		std::cout << "render thread starts!" << std::endl;
+		std::cout << "Rendering Starts!" << std::endl;
 		_m_node = new osg::Geode;
 		_d_node = new osg::Geode;
 		_scene = new osg::Group;
@@ -104,20 +102,6 @@ namespace cpd
 		viewer.setSceneData(_scene);
 
 		viewer.addEventHandler(new osgGA::StateSetManipulator(viewer.getCamera()->getOrCreateStateSet()));
-		//viewer.addEventHandler(new osgViewer::StatsHandler);
-		//viewer.addEventHandler(new osgViewer::WindowSizeHandler);
-
-		//viewer.getCamera()->getOrCreateStateSet()->setMode(GL_LIGHTING, osg::StateAttribute::ON);
-
-		
-		//viewer.setCameraManipulator(new osgGA::TrackballManipulator);
-
-		/*_scene->dirtyBound();
-		_m_node->dirtyBound();
-		_d_node->dirtyBound();*/
-
-		/*viewer.getCameraManipulator()->computeHomePosition(NULL);
-		viewer.home();*/
 
 		viewer.run();
 
@@ -147,7 +131,10 @@ namespace cpd
 	void RenderThread<T, D>::updateModelGeometry()
 	{
 		if (D > 3)
-			std::cout << "can't visualize data higher than three dimension!" << std::endl;
+        {
+			std::cerr << "can't visualize data higher than three dimension!" << std::endl;
+            return;
+        }
 
 		_m_node->removeDrawables(0);
 
@@ -192,7 +179,6 @@ namespace cpd
 		geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
 		geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
 		_m_node->addDrawable(geometry.get());
-		//_scene->addDrawable(_m_geo.get());
 
 		return;
 	}
@@ -246,7 +232,6 @@ namespace cpd
 		geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
 		geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
 		_d_node->addDrawable(geometry.get());
-		//_scene->addDrawable(_m_geo.get());
 
 		return;
 	}

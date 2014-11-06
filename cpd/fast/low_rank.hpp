@@ -9,8 +9,6 @@ namespace cpd
 	template <typename T, int D>
 	struct EigenType
 	{
-		//typedef typename Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic> MatrixX;
-
 		typedef typename Eigen::EigenSolver<TMatrix>::EigenvalueType EigenvalueType;
 
 		typedef typename Eigen::EigenSolver<TMatrix>::EigenvectorsType EigenvectorsType;
@@ -43,7 +41,6 @@ namespace cpd
 	void lr_approximate(const TMatrix& G, TMatrix& Q, TMatrix& S, int K)
 	{
 		typename Eigen::EigenSolver<TMatrix> es(G);
-		std::cout << es.eigenvalues() << std::endl;
 		const typename EigenType<T, D>::EigenvalueType& eigen_values = es.eigenvalues();
 		const typename EigenType<T, D>::EigenvectorsType& eigen_vectors = es.eigenvectors();	
 		k_extract<T, D>(eigen_values, eigen_vectors, Q, S, K);
@@ -79,11 +76,9 @@ namespace cpd
 			{
 				Q(j, i) = q_ci(j).real();
 			}
-			//Q.col(i) = eigen_vectors.col(ev[i]._idx);
 		}
 
 		S = s.asDiagonal();
-		//std::cout << S << std::endl;
 	}
 
 }

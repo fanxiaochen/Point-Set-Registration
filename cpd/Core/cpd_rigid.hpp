@@ -1,6 +1,8 @@
 #ifndef CPD_RIGID_HPP
 #define CPD_RIGID_HPP
 
+#define _USE_MATH_DEFINES
+
 #include <cmath>
 #include <vector>
 
@@ -149,7 +151,7 @@ namespace cpd
 		else
 		{
 			T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
-			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2));
+			TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2), _fgt_eps);
 			TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
 
 			TMatrix aX = TMatrix::Zero(_N, D);
@@ -159,8 +161,8 @@ namespace cpd
 			}
 
 			_PT1 = TVector(_N).setOnes() - c * a;
-			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2));
-			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2));
+			_P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2), _fgt_eps);
+			_PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2), _fgt_eps);
 		}
 	}
 

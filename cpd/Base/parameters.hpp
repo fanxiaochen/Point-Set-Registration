@@ -10,8 +10,8 @@ namespace cpd
 	{
 		TMatrix _R;
 		TVector _t;
-		T _s;
-		T _sigma2;
+		T       _s;
+		T       _sigma2;
 	};
 
 	template <typename T, int D>
@@ -19,23 +19,23 @@ namespace cpd
 	{
 		TMatrix _B;
 		TVector _t;
-		T _sigma2;
+		T       _sigma2;
 	};
 
 	template <typename T, int D>
 	struct NRigidParas
 	{
 		TMatrix _W;
-		T _sigma2;
-		T _lambda;
-		T _beta;
+		T       _sigma2;
+		T       _lambda;
+		T       _beta;
 	};
 
 	template <typename T, int D>
 	struct Normal
 	{
 		TVector _means;
-		T _scale;
+		T       _scale;
 	};
 }
 
