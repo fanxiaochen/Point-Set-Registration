@@ -42,6 +42,8 @@ namespace cpd
 		T computeGaussianExp(size_t m, size_t n);
 		T energy();
 
+        void numeric_correlation();
+
 	private:
 		NRigidParas<T, D>	_paras;
 		TMatrix				_G;
@@ -155,7 +157,7 @@ namespace cpd
 		constructG();
 		
 		if (_lr)
-			lr_approximate<T, D>(_G, _Q, _S, _K);
+			lr_approximate<T, D>(_G, _Q, _S, _K, _lr_maxitr);
 	}
 
 	template<typename T, int D>
@@ -199,6 +201,7 @@ namespace cpd
 		}
 		else
 		{
+            numeric_correlation();
 			TMatrix A1 = ((1/(_paras._lambda*_paras._sigma2))*_P1).asDiagonal();
 			TMatrix A2 = _Q * (_S.inverse() + _Q.transpose()*A1*_Q).inverse() * _Q.transpose();
 			TMatrix A_inv = A1 - A1 * A2 * A1;
@@ -264,6 +267,20 @@ namespace cpd
 			}
 		}
 	}
+
+    template <typename T, int D>
+    void CPDNRigid<T, D>::numeric_correlation()
+    {
+        T min_numerics = std::numeric_limits<T>::epsilon();
+
+        for (size_t i = 0, i_end = _P1.rows(); i < i_end; i ++)
+        {
+            if (_P1(i, 0) < min_numerics)
+                _P1(i, 0) = min_numerics;
+        }
+    }
 }
+
+
 
 #endif

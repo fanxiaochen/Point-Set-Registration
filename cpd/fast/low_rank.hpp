@@ -38,9 +38,12 @@ namespace cpd
 
 
 	template <typename T, int D>
-	void lr_approximate(const TMatrix& G, TMatrix& Q, TMatrix& S, int K)
+	void lr_approximate(const TMatrix& G, TMatrix& Q, TMatrix& S, int K, size_t lr_maxitr)
 	{
-		typename Eigen::EigenSolver<TMatrix> es(G);
+		typename Eigen::EigenSolver<TMatrix> es;
+        es.setMaxIterations(lr_maxitr*G.rows());
+        es.compute(G);
+
 		const typename EigenType<T, D>::EigenvalueType& eigen_values = es.eigenvalues();
 		const typename EigenType<T, D>::EigenvectorsType& eigen_vectors = es.eigenvectors();	
 		k_extract<T, D>(eigen_values, eigen_vectors, Q, S, K);

@@ -21,6 +21,7 @@ namespace cpd
         void setFgtEpsilon(T fgt_eps);
 		void setLowRankFlag(bool lr);
 		void setKLowRank(int K);
+        void setLRMaxIteration(size_t lr_maxitr);
 
 		void normalize();
 		void denormalize();
@@ -59,6 +60,7 @@ namespace cpd
 
 		bool		_lr;
 		int			_K;
+        size_t      _lr_maxitr;
 
 		Normal<T, D>	_normal_model;
 		Normal<T, D>	_normal_data;
@@ -69,8 +71,8 @@ namespace cpd
 {
 	template <typename T, int D>
 	CPDBase<T, D>::CPDBase()
-		: _iter_num(0), _v_tol(0), _e_tol(0), _w(0),
-		_fgt(false), _fgt_eps(1e-3), _lr(false), _K(0)
+		: _iter_num(50), _v_tol(1e-3), _e_tol(1e-3), _w(0),
+		_fgt(false), _fgt_eps(1e-3), _lr(false), _K(0), _lr_maxitr(40)
 	{}
 
 	template <typename T, int D>
@@ -123,6 +125,12 @@ namespace cpd
 	{
 		_K = K;
 	}
+
+    template <typename T, int D>
+    void CPDBase<T, D>::setLRMaxIteration(size_t lr_maxitr)
+    {
+        _lr_maxitr = lr_maxitr;
+    }
 
 	template <typename T, int D>
 	void CPDBase<T, D>::updateModel()

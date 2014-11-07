@@ -1,9 +1,7 @@
 #include <iostream>
-#include "base/vector.hpp"
 #include "base/matrix.hpp"
 #include "base/data.hpp"
 #include "core/registrator.hpp"
-//#include "Core/cpd_base.h"
 #include "core/cpd_rigid.hpp"
 #include "core/cpd_nonrigid.hpp"
 #include "fast/low_rank.hpp"
@@ -26,27 +24,27 @@ int main()
 	//		7,8,
 	//		10,10;
 	////data = - model;
-//	getInputData<double, 3>("y-nonrigid-392.txt", "x-nonrigid-392.txt", model, data);
+//	getInputData<float, 3>("y-nonrigid-452.txt", "x-nonrigid-452.txt", model, data);
 	getInputData<float, 3>("lily-5.txt", "lily-30.txt", model, data);
 
 	CPDNRigid<float, 3>* reg = new CPDNRigid<float, 3>();
 	reg->setInputData(model, data);
 	reg->setVision(true);
 	reg->setIterativeNumber(100);
-	reg->setVarianceTolerance(1e-5);
-	reg->setEnergyTolerance(1e-3);
-	reg->setOutlierWeight(0.1);
+	reg->setVarianceTolerance(1e-4);
+	reg->setEnergyTolerance(1e-4);
+	reg->setOutlierWeight(0.4);
 	reg->setFgtFlag(true);
     reg->setFgtEpsilon(1e-4);
 	reg->setLowRankFlag(true);
-	reg->setKLowRank(50);
+	reg->setKLowRank(30);
 	reg->run();
 
 	/*RenderThread<double, 3>::instance()->updateModel(reg->getModel());
 	RenderThread<double, 3>::instance()->updateData(data);
 	RenderThread<double, 3>::instance()->startThread();*/
 
-	std::cout << reg->getModel() << std::endl;
+	//std::cout << reg->getModel() << std::endl;
 
 	/*std::cout << "results:" << std::endl;
 	std::cout << "model:" << std::endl;
