@@ -1,6 +1,8 @@
 project(CPD)
 cmake_minimum_required(VERSION 2.8)
 
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 set( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
 if( NOT EIGEN3_INCLUDE_DIR )
     message( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation." )
@@ -11,14 +13,16 @@ find_package(OpenSceneGraph REQUIRED osgViewer osgGA)
 include_directories(${EIGEN3_INCLUDE_DIR})
 include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 
+find_package(3rdParty)
+include_directories(${FIGTREE_INCLUDE_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cpd)
+
 
 set(src_base cpd/base)
 set(src_core cpd/core)
 set(src_fast cpd/fast)
 set(src_disp cpd/disp)
-set(src_3rdparty cpd/3rdparty/figtree)
 		 
 set(srcs_base	${src_base}/matrix.hpp
 				${src_base}/parameters.hpp
@@ -34,12 +38,6 @@ set(srcs_fast		${src_fast}/fgt_wrapper.hpp
 					${src_fast}/low_rank.hpp)
 
 set(srcs_disp		${src_disp}/render_thread.hpp)
-
-set(srcs_3rdparty	${src_3rdparty}/figtree.h
-					${src_3rdparty}/figtree_internal.h
-					${src_3rdparty}/kCenterClustering.h
-					${src_3rdparty}/figtree.cpp
-					${src_3rdparty}/kCenterClustering.cpp)
 				
 set(srcs_test	cpd/test.cpp)
 
@@ -65,4 +63,4 @@ source_group(${srcfiles_3rdparty} FILES ${srcs_3rdparty})
 source_group(${srcfiles_test} FILES ${srcs_test})
 
 add_executable(CPD ${srcs})
-target_link_libraries(CPD ${OPENSCENEGRAPH_LIBRARIES})
+target_link_libraries(CPD ${FIGTREE_LIBRARY} ${OPENSCENEGRAPH_LIBRARIES})
