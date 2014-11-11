@@ -66,10 +66,10 @@ namespace cpd
 		void initTransform();
 
 	protected:
-		size_t		_iter_num;
-		T			_v_tol;
-		T			_e_tol;
-		T			_w;
+		size_t      _iter_num;
+		T           _v_tol;
+		T           _e_tol;
+		T           _w;
 
 		TMatrix		_corres;
 		TMatrix		_T;
@@ -77,12 +77,12 @@ namespace cpd
 		TMatrix		_P1;
 		TMatrix		_PT1;
 		TMatrix		_PX;
-
-		bool		_fgt;
+        
+        bool        _fgt;
         T           _fgt_eps;
 
 		bool		_lr;
-		int			_K;
+		int         _K;
         size_t      _lr_maxitr;
 
 		Normal<T, D>	_normal_model;
@@ -155,11 +155,11 @@ namespace cpd
         _lr_maxitr = lr_maxitr;
     }
 
-	template <typename T, int D>
-	void CPDBase<T, D>::updateModel()
-	{
-		_model = _T;
-	}
+    template <typename T, int D>
+    void CPDBase<T, D>::updateModel()
+    {
+	    _model = _T;
+    }
 
 	template <typename T, int D>
 	void CPDBase<T, D>::initTransform()

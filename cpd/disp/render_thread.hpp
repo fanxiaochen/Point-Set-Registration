@@ -74,15 +74,15 @@ namespace cpd
 	{
 	public:
 		virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-       {
-          osg::ref_ptr<osg::Geode> m_node = 
-             dynamic_cast<osg::Geode*>(node);
+        {
+            osg::ref_ptr<osg::Geode> m_node = 
+                dynamic_cast<osg::Geode*>(node);
 
-          if(m_node)
-			  RenderThread<T, D>::instance()->updateModelGeometry();
+            if(m_node)
+			    RenderThread<T, D>::instance()->updateModelGeometry();
           
-          traverse(node, nv); 
-       }
+            traverse(node, nv); 
+        }
 	};
 
 	template <typename T, int D>
@@ -90,15 +90,15 @@ namespace cpd
 	{
 	public:
 		virtual void operator()(osg::Node* node, osg::NodeVisitor* nv)
-       {
-          osg::ref_ptr<osg::Geode> d_node = 
-             dynamic_cast<osg::Geode*>(node);
+        {
+            osg::ref_ptr<osg::Geode> d_node = 
+                dynamic_cast<osg::Geode*>(node);
 
-          if(d_node)
-			  RenderThread<T, D>::instance()->updateDataGeometry();
-          
-          traverse(node, nv); 
-       }
+            if(d_node)
+                RenderThread<T, D>::instance()->updateDataGeometry();
+
+            traverse(node, nv); 
+        }
 	};
 }
 
@@ -153,110 +153,113 @@ namespace cpd
 	template <typename T, int D>
 	void RenderThread<T, D>::updateModelGeometry()
 	{
-		if (D > 3)
+	    if (D > 3)
         {
-			std::cerr << "can't visualize data higher than three dimension!" << std::endl;
+		    std::cerr << "can't visualize data higher than three dimension!" << std::endl;
             return;
         }
 
-		_m_node->removeDrawables(0);
+	    _m_node->removeDrawables(0);
 
-		osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
-		osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+	    osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+	    osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
-		for(size_t i = 0, i_end = _model.rows(); i < i_end; i++)   
-		{
-			osg::Vec3 point;
-			const TVector& m_vec = _model.row(i);
+	    for(size_t i = 0, i_end = _model.rows(); i < i_end; i++)   
+	    {
+		    osg::Vec3 point;
+		    const TVector& m_vec = _model.row(i);
 			
-			if (D == 3)
-			{
-				point.x() = m_vec(0);
-				point.y() = m_vec(1);
-				point.z() = m_vec(2);
-			}
+		    if (D == 3)
+		    {
+			    point.x() = m_vec(0);
+			    point.y() = m_vec(1);
+			    point.z() = m_vec(2);
+		    }
 				
-			else
-			{
-				point.x() = m_vec(0);
-				point.y() = 0;
-				point.z() = m_vec(1);
-			}
+		    else
+		    {
+			    point.x() = m_vec(0);
+			    point.y() = 0;
+			    point.z() = m_vec(1);
+		    }
 				
 
-			points->push_back(point);
-		}
+		    points->push_back(point);
+	    }
 			
-		geometry->setVertexArray(points);
+	    geometry->setVertexArray(points);
 
-		osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 0.0f));
-		geometry->setColorArray(colors.get());
-		geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+	    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+	    colors->push_back(osg::Vec4(1.0f, 0.0f, 0.0f, 0.0f));
+	    geometry->setColorArray(colors.get());
+	    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-		osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-		normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
-		geometry->setNormalArray(normals.get());
-		geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+	    normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
+	    geometry->setNormalArray(normals.get());
+	    geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
 
-		geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
-		geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
-		_m_node->addDrawable(geometry.get());
+	    geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
+	    geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
+	    _m_node->addDrawable(geometry.get());
 
-		return;
+	    return;
 	}
 
 	template <typename T, int D>
 	void RenderThread<T, D>::updateDataGeometry()
 	{
-		if (D > 3)
-			std::cout << "can't visualize data higher than three dimension!" << std::endl;
+	    if (D > 3)
+        {
+		    std::cerr << "can't visualize data higher than three dimension!" << std::endl;
+            return;
+        }
 
-		_d_node->removeDrawables(0);
+	    _d_node->removeDrawables(0);
 
-		osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
-		osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
+	    osg::ref_ptr<osg::Geometry> geometry = new osg::Geometry;
+	    osg::ref_ptr<osg::Vec3Array> points = new osg::Vec3Array;
 
-		for(size_t i = 0, i_end = _data.rows(); i < i_end; i++)   
-		{
-			osg::Vec3 point;
-			const TVector& d_vec = _data.row(i);
+	    for(size_t i = 0, i_end = _data.rows(); i < i_end; i++)   
+	    {
+		    osg::Vec3 point;
+		    const TVector& d_vec = _data.row(i);
 			
-			if (D == 3)
-			{
-				point.x() = d_vec(0);
-				point.y() = d_vec(1);
-				point.z() = d_vec(2);
-			}
+		    if (D == 3)
+		    {
+			    point.x() = d_vec(0);
+			    point.y() = d_vec(1);
+			    point.z() = d_vec(2);
+		    }
 				
-			else
-			{
-				point.x() = d_vec(0);
-				point.y() = 0;
-				point.z() = d_vec(1);
-			}
+		    else
+		    {
+			    point.x() = d_vec(0);
+			    point.y() = 0;
+			    point.z() = d_vec(1);
+		    }
 				
 
-			points->push_back(point);
-		}
+		    points->push_back(point);
+	    }
 			
-		geometry->setVertexArray(points);
+	    geometry->setVertexArray(points);
 
-		osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
-		colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 0.0f));
-		geometry->setColorArray(colors.get());
-		geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
+	    osg::ref_ptr<osg::Vec4Array> colors = new osg::Vec4Array;
+	    colors->push_back(osg::Vec4(0.0f, 0.0f, 1.0f, 0.0f));
+	    geometry->setColorArray(colors.get());
+	    geometry->setColorBinding(osg::Geometry::BIND_OVERALL);
 
-		osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
-		normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
-		geometry->setNormalArray(normals.get());
-		geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
+	    osg::ref_ptr<osg::Vec3Array> normals = new osg::Vec3Array;
+	    normals->push_back(osg::Vec3(0.0f, -1.0f, 0.0f));
+	    geometry->setNormalArray(normals.get());
+	    geometry->setNormalBinding(osg::Geometry::BIND_OVERALL);
 
-		geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
-		geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
-		_d_node->addDrawable(geometry.get());
+	    geometry->addPrimitiveSet(new osg::DrawArrays(osg::PrimitiveSet::POINTS, 0, points->size()));
+	    geometry->getOrCreateStateSet()->setAttribute(new osg::Point(5.0f));
+	    _d_node->addDrawable(geometry.get());
 
-		return;
+	    return;
 	}
 }
 

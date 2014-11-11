@@ -68,10 +68,10 @@ namespace cpd
         void P1_correlation();
 
 	private:
-		NRigidParas<T, D>	_paras;
-		TMatrix				_G;
-		TMatrix				_Q;
-		TMatrix				_S;
+		NRigidParas<T, D>   _paras;
+		TMatrix             _G;
+		TMatrix             _Q;
+		TMatrix             _S;
 	};
 }
 
@@ -80,7 +80,7 @@ namespace cpd
 	template <typename T, int D>
 	CPDNRigid<T, D>::CPDNRigid()
 	{
-		_type = NONRIGID;
+        _type = NONRIGID;
 
         _paras._lambda = 2;
         _paras._beta = 2;
@@ -225,7 +225,7 @@ namespace cpd
 		else
 		{
             P1_correlation();
-			TMatrix A1 = ((1/(_paras._lambda*_paras._sigma2))*_P1).asDiagonal();
+            TMatrix A1 = ((1/(_paras._lambda*_paras._sigma2))*_P1).asDiagonal();
 			TMatrix A2 = _Q * (_S.inverse() + _Q.transpose()*A1*_Q).inverse() * _Q.transpose();
 			TMatrix A_inv = A1 - A1 * A2 * A1;
 			TMatrix B = _P1.cwiseInverse().asDiagonal() * _PX - _model;
