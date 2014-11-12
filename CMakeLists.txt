@@ -16,13 +16,13 @@ include_directories(${OPENSCENEGRAPH_INCLUDE_DIRS})
 find_package(3rdParty)
 include_directories(${FIGTREE_INCLUDE_DIR})
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/cpd)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
-set(src_base cpd/base)
-set(src_core cpd/core)
-set(src_fast cpd/fast)
-set(src_disp cpd/disp)
+set(src_base include/base)
+set(src_core include/core)
+set(src_fast include/fast)
+set(src_disp include/disp)
 		 
 set(srcs_base	${src_base}/matrix.hpp
 				${src_base}/parameters.hpp
@@ -39,7 +39,7 @@ set(srcs_fast		${src_fast}/fgt_wrapper.hpp
 
 set(srcs_disp		${src_disp}/render_thread.hpp)
 				
-set(srcs_test	cpd/test.cpp)
+set(srcs_test	src/test.cpp)
 
 set(srcs		${srcs_base} ${srcs_core} ${srcs_fast} ${srcs_disp} ${srcs_3rdparty} ${srcs_test})
 
