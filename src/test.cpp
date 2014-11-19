@@ -31,11 +31,13 @@ int main()
     reg->setKLowRank(30);*/
     reg->run();
 
+    MatrixType<float, 2>::Matrix corres = reg->getCorrespondences();
+
     /*RenderThread<double, 3>::instance()->updateModel(reg->getModel());
     RenderThread<double, 3>::instance()->updateData(data);
     RenderThread<double, 3>::instance()->startThread();*/
 
-    //std::cout << reg->getModel() << std::endl;
+    std::cout << reg->getModel() << std::endl;
 
     /*std::cout << "results:" << std::endl;
     std::cout << "model:" << std::endl;

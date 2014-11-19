@@ -109,6 +109,7 @@ namespace cpd
             iter_num ++;	
         }
         
+        correspondences();
         updateModel();
         denormalize();
         RenderThread<T, D>::instance()->cancel();		
