@@ -237,6 +237,7 @@ namespace cpd
 
         _paras._sigma2 = 1/(N_P*D) * ((_data.transpose()*_PT1.asDiagonal()*_data).trace() -
             2*(_PX.transpose()*_T).trace() + (_T.transpose()*_P1.asDiagonal()*_T).trace());
+        _paras._sigma2 = abs(_paras._sigma2);
 
     }
 
