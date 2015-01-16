@@ -14,24 +14,25 @@ using namespace std;
 int main()
 {
 
-    MatrixType<float, 2>::MatrixD model, data;
-    getInputData<float, 2>("y.txt", "x.txt", model, data);
-    //getInputData<float, 3>("lily-5.txt", "lily-30.txt", model, data);
+    MatrixType<float, 3>::MatrixD model, data;
+    getInputData<float, 3>("lily-5.txt", "lily-30.txt", model, data);
+   // getInputData<float, 3>("points-test.txt", "points.txt", model, data);
 
-    CPDRigid<float, 2>* reg = new CPDRigid<float, 2>();
+    CPDNRigid<float, 3>* reg = new CPDNRigid<float, 3>();
     reg->setInputData(model, data);
     reg->setVision(true);
-    reg->setIterativeNumber(100);
+    reg->setIterativeNumber(20);
     reg->setVarianceTolerance(1e-4);
     reg->setEnergyTolerance(1e-4);
-    reg->setOutlierWeight(0.4);
+    reg->setOutlierWeight(0.5);
     reg->setFgtFlag(true);
     reg->setFgtEpsilon(1e-4);
     /*reg->setLowRankFlag(true);
     reg->setKLowRank(30);*/
     reg->run();
 
-    MatrixType<float, 2>::Matrix corres = reg->getCorrespondences();
+    
+    //MatrixType<float, 2>::Matrix corres = reg->getCorrespondences();
 
     /*RenderThread<double, 3>::instance()->updateModel(reg->getModel());
     RenderThread<double, 3>::instance()->updateData(data);

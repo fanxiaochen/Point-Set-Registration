@@ -1,1 +1,1 @@
-a C++ implementation of Point Set Registration Ceherent Point Drift
+a C++ implementation of Point Set Registration Coherent Point Drift
