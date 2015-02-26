@@ -194,7 +194,6 @@ namespace cpd
     void CPDRigid<T, D>::m_step()
     {
         T N_P = _P1.sum();
-
         TVector mu_x = _data.transpose() * _PT1 / N_P;
         TVector mu_y = _model.transpose() * _P1 / N_P;
 
@@ -207,12 +206,10 @@ namespace cpd
         Eigen::JacobiSVD<TMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
         TMatrix U = svd.matrixU();
         TMatrix V = svd.matrixV();
-
         T det_uv = TMatrix(U*V.transpose()).determinant();
-        TVector C(D);
-        C.setIdentity();
-        C(D-1) = det_uv;
-        _paras._R = U * C.asDiagonal() * V.transpose();
+        TMatrix C = TMatrix::Identity(D, D);
+        C(D-1, D-1) = det_uv;
+        _paras._R = U * C * V.transpose();
 
         T s_upper = TMatrix(A.transpose()*_paras._R).trace();
         T s_lower = TMatrix(Y_hat.transpose()*_P1.asDiagonal()*Y_hat).trace();

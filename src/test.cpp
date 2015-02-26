@@ -4,7 +4,6 @@
 #include "core/registrator.hpp"
 #include "core/cpd_rigid.hpp"
 #include "core/cpd_nonrigid.hpp"
-#include "fast/low_rank.hpp"
 
 using namespace cpd;
 
@@ -15,18 +14,19 @@ int main()
 {
 
     MatrixType<float, 3>::MatrixD model, data;
-    getInputData<float, 3>("lily-5.txt", "lily-30.txt", model, data);
+    //getInputData<float, 3>("face2.txt", "face1.txt", model, data);
    // getInputData<float, 3>("points-test.txt", "points.txt", model, data);
-
+    getInputData<float, 3>("lily-5.txt", "lily-30.txt", model, data);
     CPDNRigid<float, 3>* reg = new CPDNRigid<float, 3>();
+    //CPDRigid<float, 3>* reg = new CPDRigid<float, 3>();
     reg->setInputData(model, data);
     reg->setVision(true);
-    reg->setIterativeNumber(20);
-    reg->setVarianceTolerance(1e-4);
-    reg->setEnergyTolerance(1e-4);
-    reg->setOutlierWeight(0.5);
-    reg->setFgtFlag(true);
-    reg->setFgtEpsilon(1e-4);
+    reg->setIterativeNumber(100);
+    reg->setVarianceTolerance(1e-6);
+    reg->setEnergyTolerance(1e-5);
+    reg->setOutlierWeight(0.0);
+    //reg->setFgtFlag(true);
+    //reg->setFgtEpsilon(1e-4);
     /*reg->setLowRankFlag(true);
     reg->setKLowRank(30);*/
     reg->run();
@@ -38,7 +38,7 @@ int main()
     RenderThread<double, 3>::instance()->updateData(data);
     RenderThread<double, 3>::instance()->startThread();*/
 
-    std::cout << reg->getModel() << std::endl;
+    //std::cout << reg->getModel() << std::endl;
 
     /*std::cout << "results:" << std::endl;
     std::cout << "model:" << std::endl;
