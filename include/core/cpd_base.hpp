@@ -158,36 +158,36 @@ namespace cpd
     template <typename T, int D>
     void CPDBase<T, D>::updateModel()
     {
-        _model = _T;
+        this->_model = _T;
     }
 
     template <typename T, int D>
     void CPDBase<T, D>::initTransform()
     {
-        _T = _model;
+        _T = this->_model;
     }
 
     template <typename T, int D>
     void CPDBase<T, D>::normalize()
     {
-        _normal_model._means = _model.colwise().mean();
-        _normal_data._means = _data.colwise().mean();
+        _normal_model._means = this->_model.colwise().mean();
+        _normal_data._means = this->_data.colwise().mean();
 
-        _model = _model - _normal_model._means.transpose().replicate(_M, 1);
-        _data = _data - _normal_data._means.transpose().replicate(_N, 1);
+        this->_model = this->_model - _normal_model._means.transpose().replicate(this->_M, 1);
+        this->_data = this->_data - _normal_data._means.transpose().replicate(this->_N, 1);
 
-        _normal_model._scale = sqrt(_model.array().square().sum() / _M);
-        _normal_data._scale = sqrt(_data.array().square().sum() / _N);
+        _normal_model._scale = sqrt(this->_model.array().square().sum() / this->_M);
+        _normal_data._scale = sqrt(this->_data.array().square().sum() / this->_N);
 
-        _model = _model / _normal_model._scale;
-        _data = _data / _normal_data._scale;
+        this->_model = this->_model / _normal_model._scale;
+        this->_data = this->_data / _normal_data._scale;
     }
 
     template <typename T, int D>
     void CPDBase<T, D>::denormalize()
     {
-        _model = _model * _normal_data._scale + _normal_data._means.transpose().replicate(_M, 1);
-        _data = _data * _normal_data._scale + _normal_data._means.transpose().replicate(_N, 1);
+        this->_model = this->_model * _normal_data._scale + _normal_data._means.transpose().replicate(this->_M, 1);
+        this->_data = this->_data * _normal_data._scale + _normal_data._means.transpose().replicate(this->_N, 1);
 
     }
 }

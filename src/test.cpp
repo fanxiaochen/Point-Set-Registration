@@ -26,8 +26,8 @@ int main()
     reg->setOutlierWeight(0.0);
     reg->setFgtFlag(true);
     reg->setFgtEpsilon(1e-4);
-    /*reg->setLowRankFlag(true);
-    reg->setKLowRank(30);*/
+    reg->setLowRankFlag(true);
+    reg->setKLowRank(30);
     reg->run();
 
     //std::cout << reg->getModel() << std::endl;

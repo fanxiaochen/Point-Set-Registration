@@ -69,7 +69,7 @@ namespace cpd
     template <typename T, int D>
     CPDRigid<T, D>::CPDRigid()
     {
-        _type = RIGID;
+        this->_type = RIGID;
     }
 
     template <typename T, int D>
@@ -79,20 +79,20 @@ namespace cpd
     void CPDRigid<T, D>::run()
     {
         size_t iter_num = 0;
-        T e_tol = 10 + _e_tol;
+        T e_tol = 10 + this->_e_tol;
         T e = 0;
         
         normalize();
         initialization();
 
-        if (_vision)
+        if (this->_vision)
         {
-            RenderThread<T, D>::instance()->updateModel(_model);
-            RenderThread<T, D>::instance()->updateData(_data);
+            RenderThread<T, D>::instance()->updateModel(this->_model);
+            RenderThread<T, D>::instance()->updateData(this->_data);
             RenderThread<T, D>::instance()->startThread();
         }
 
-        while (iter_num < _iter_num && e_tol > _e_tol && _paras._sigma2 > 10 * _v_tol)
+        while (iter_num < this->_iter_num && e_tol > this->_e_tol && _paras._sigma2 > 10 * this->_v_tol)
         {
             e_step();
 
@@ -103,8 +103,8 @@ namespace cpd
             m_step();
             align();
 
-            if (_vision == true)
-                RenderThread<T, D>::instance()->updateModel(_T);
+            if (this->_vision == true)
+                RenderThread<T, D>::instance()->updateModel(this->_T);
 
             iter_num ++;	
         }
@@ -119,18 +119,18 @@ namespace cpd
     void CPDRigid<T, D>::initialization()
     {
         // determine data number
-        _M = _model.rows();
-        _N = _data.rows();
+        this->_M = this->_model.rows();
+        this->_N = this->_data.rows();
 
         // initialization
         _paras._R = TMatrix::Identity(D, D);
         _paras._t = TVector::Zero(D, 1);
         _paras._s = 1;
 
-        T sigma_sum = _M*(_data.transpose()*_data).trace() + 
-            _N*(_model.transpose()*_model).trace() - 
-            2*(_data.colwise().sum())*(_model.colwise().sum()).transpose();
-        _paras._sigma2 = sigma_sum / (D*_N*_M);
+        T sigma_sum = this->_M*(this->_data.transpose()*this->_data).trace() + 
+            this->_N*(this->_model.transpose()*this->_model).trace() - 
+            2*(this->_data.colwise().sum())*(this->_model.colwise().sum()).transpose();
+        _paras._sigma2 = sigma_sum / (D*this->_N*this->_M);
 
         initTransform();
     }
@@ -140,23 +140,23 @@ namespace cpd
     template <typename T, int D>
     void CPDRigid<T, D>::correspondences()
     {
-        _corres.setZero(_M, _N);
+        this->_corres.setZero(this->_M, this->_N);
 
-        for (size_t n = 0; n < _N; n ++)
+        for (size_t n = 0; n < this->_N; n ++)
         {
             typename std::vector<T> t_exp;
             T sum_exp = 0;
-            T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
-            for (size_t m = 0; m < _M; m ++)
+            T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (this->_w/(1-this->_w)) * (T(this->_M)/this->_N);
+            for (size_t m = 0; m < this->_M; m ++)
             {
                 T m_exp = computeGaussianExp(m, n);
                 t_exp.push_back(m_exp);
                 sum_exp += m_exp;
             }
 
-            for (size_t m = 0; m < _M; m ++)
+            for (size_t m = 0; m < this->_M; m ++)
             {
-                _corres(m, n) = t_exp.at(m) / (sum_exp + c);
+                this->_corres(m, n) = t_exp.at(m) / (sum_exp + c);
             }
         }
     }
@@ -164,44 +164,44 @@ namespace cpd
     template <typename T, int D>
     void CPDRigid<T, D>::e_step()
     {
-        if (!_fgt)
+        if (!this->_fgt)
         {
             correspondences();
-            _P1 = _corres * TVector(_N).setOnes();
-            _PT1 = _corres.transpose() * TVector(_M).setOnes();
-            _PX = _corres * _data;
+            this->_P1 = this->_corres * TVector(this->_N).setOnes();
+            this->_PT1 = this->_corres.transpose() * TVector(this->_M).setOnes();
+            this->_PX = this->_corres * this->_data;
 
         }
         else
         {
-            T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
-            TMatrix KT1 = fgt<T, D>(_T, _data, TVector(_M).setOnes(), sqrt(2*_paras._sigma2), _fgt_eps);
-            TVector a = (TVector(KT1) + c*TVector(_N).setOnes()).cwiseInverse();
+            T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (this->_w/(1-this->_w)) * (T(this->_M)/this->_N);
+            TMatrix KT1 = fgt<T, D>(this->_T, this->_data, TVector(this->_M).setOnes(), sqrt(2*_paras._sigma2), this->_fgt_eps);
+            TVector a = (TVector(KT1) + c*TVector(this->_N).setOnes()).cwiseInverse();
 
-            TMatrix aX = TMatrix::Zero(_N, D);
+            TMatrix aX = TMatrix::Zero(this->_N, D);
             for (size_t i = 0; i < D; i ++)
             {
-                aX.col(i) = _data.col(i).cwiseProduct(a);
+                aX.col(i) = this->_data.col(i).cwiseProduct(a);
             }
 
-            _PT1 = TVector(_N).setOnes() - c * a;
-            _P1 = fgt<T, D>(_data, _T, a, sqrt(2*_paras._sigma2), _fgt_eps);
-            _PX = fgt<T, D>(_data, _T, aX, sqrt(2*_paras._sigma2), _fgt_eps);
+            this->_PT1 = TVector(this->_N).setOnes() - c * a;
+            this->_P1 = fgt<T, D>(this->_data, this->_T, a, sqrt(2*_paras._sigma2), this->_fgt_eps);
+            this->_PX = fgt<T, D>(this->_data, this->_T, aX, sqrt(2*_paras._sigma2), this->_fgt_eps);
         }
     }
 
     template <typename T, int D>
     void CPDRigid<T, D>::m_step()
     {
-        T N_P = _P1.sum();
-        TVector mu_x = _data.transpose() * _PT1 / N_P;
-        TVector mu_y = _model.transpose() * _P1 / N_P;
+        T N_P = this->_P1.sum();
+        TVector mu_x = this->_data.transpose() * this->_PT1 / N_P;
+        TVector mu_y = this->_model.transpose() * this->_P1 / N_P;
 
-        TMatrixD X_hat = _data - TMatrix(TVector(_N).setOnes() * mu_x.transpose());
-        TMatrixD Y_hat = _model - TMatrix(TVector(_M).setOnes() * mu_y.transpose());
+        TMatrixD X_hat = this->_data - TMatrix(TVector(this->_N).setOnes() * mu_x.transpose());
+        TMatrixD Y_hat = this->_model - TMatrix(TVector(this->_M).setOnes() * mu_y.transpose());
 
-        TMatrix A = (_PX-_P1*mu_x.transpose()).transpose() * 
-            (_model - TMatrix(TVector(_M).setOnes() * mu_y.transpose()));
+        TMatrix A = (this->_PX-this->_P1*mu_x.transpose()).transpose() * 
+            (this->_model - TMatrix(TVector(this->_M).setOnes() * mu_y.transpose()));
 
         Eigen::JacobiSVD<TMatrix> svd(A, Eigen::ComputeThinU | Eigen::ComputeThinV);
         TMatrix U = svd.matrixU();
@@ -212,12 +212,12 @@ namespace cpd
         _paras._R = U * C * V.transpose();
 
         T s_upper = TMatrix(A.transpose()*_paras._R).trace();
-        T s_lower = TMatrix(Y_hat.transpose()*_P1.asDiagonal()*Y_hat).trace();
+        T s_lower = TMatrix(Y_hat.transpose()*this->_P1.asDiagonal()*Y_hat).trace();
         _paras._s =  s_upper / s_lower; 
             
         _paras._t = mu_x - _paras._s * _paras._R * mu_y;
 
-        T tr_f = TMatrix(X_hat.transpose()*_PT1.asDiagonal()*X_hat).trace();
+        T tr_f = TMatrix(X_hat.transpose()*this->_PT1.asDiagonal()*X_hat).trace();
         T tr_b = TMatrix(A.transpose()*_paras._R).trace();
         _paras._sigma2 = (tr_f - _paras._s * tr_b) / (N_P * D);
         _paras._sigma2 = abs(_paras._sigma2);
@@ -227,14 +227,14 @@ namespace cpd
     template <typename T, int D>
     void CPDRigid<T, D>::align()
     {
-        _T = (_paras._s) * (_model) * (_paras._R).transpose() + 
-            TVector(_M).setOnes() * (_paras._t).transpose();
+        this->_T = (_paras._s) * (this->_model) * (_paras._R).transpose() + 
+            TVector(this->_M).setOnes() * (_paras._t).transpose();
     }
 
     template <typename T, int D>
     T CPDRigid<T, D>::computeGaussianExp(size_t m, size_t n)
     {
-        TVector vec = TVector(_T.row(m) - _data.row(n));
+        TVector vec = TVector(this->_T.row(m) - this->_data.row(n));
         T g_exp = exp(-vec.squaredNorm()/(2*_paras._sigma2));
         return g_exp;
     }
@@ -244,21 +244,21 @@ namespace cpd
     {
         T e = 0;
         
-        for (size_t n = 0; n < _N; n ++)
+        for (size_t n = 0; n < this->_N; n ++)
         {
             T sp = 0;
-            for (size_t m = 0; m < _M; m ++)
+            for (size_t m = 0; m < this->_M; m ++)
             {
                 sp += computeGaussianExp(m, n);
             }
 
-            sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (_w/(1-_w)) * (T(_M)/_N);
+            sp += pow((2*M_PI*_paras._sigma2), 0.5*D) * (this->_w/(1-this->_w)) * (T(this->_M)/this->_N);
 
             e += -log(sp);
 
         }
 
-        e += _N * D * log(_paras._sigma2) / 2;
+        e += this->_N * D * log(_paras._sigma2) / 2;
 
         return e;
     }
