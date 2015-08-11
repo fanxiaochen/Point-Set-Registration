@@ -98,7 +98,7 @@ namespace cpd
 
             T old_e = e;
             e = energy();
-            e_tol = abs((e - old_e) / e);
+            e_tol = fabs((e - old_e) / e);
 
             m_step();
             align();
@@ -220,7 +220,7 @@ namespace cpd
         T tr_f = TMatrix(X_hat.transpose()*this->_PT1.asDiagonal()*X_hat).trace();
         T tr_b = TMatrix(A.transpose()*_paras._R).trace();
         _paras._sigma2 = (tr_f - _paras._s * tr_b) / (N_P * D);
-        _paras._sigma2 = abs(_paras._sigma2);
+        _paras._sigma2 = fabs(_paras._sigma2);
 
     }
 

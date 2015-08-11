@@ -126,14 +126,14 @@ namespace cpd
             T old_e = e;
             e = energy();
             e += _paras._lambda/2 * (_paras._W.transpose()*_G*_paras._W).trace();
-            e_tol = abs((e - old_e) / e);
+            e_tol = fabs((e - old_e) / e);
 
             m_step();
 
             if (this->_vision == true)
                 RenderThread<T, D>::instance()->updateModel(this->_T);
 
-            iter_num ++;	
+            iter_num ++;
         }
         
         correspondences();
@@ -237,7 +237,7 @@ namespace cpd
 
         _paras._sigma2 = 1/(N_P*D) * ((this->_data.transpose()*this->_PT1.asDiagonal()*this->_data).trace() -
             2*(this->_PX.transpose()*this->_T).trace() + (this->_T.transpose()*this->_P1.asDiagonal()*this->_T).trace());
-        _paras._sigma2 = abs(_paras._sigma2);
+        _paras._sigma2 = fabs(_paras._sigma2);
 
     }
 
