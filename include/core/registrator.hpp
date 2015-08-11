@@ -35,18 +35,18 @@ namespace cpd
         Registrator();
         virtual ~Registrator();
 
-        void setInputData(const DTMatrixD& model, const DTMatrixD& data);
+        void setInputData(const TMatrixD& model, const TMatrixD& data);
         void setVision(bool vision);
 
         inline RegType getRegistrationType(){ return _type; }
-        inline DTMatrixD& getModel(){ return _model; }
-        inline DTMatrixD& getData(){ return _data; }
+        inline TMatrixD& getModel(){ return _model; }
+        inline TMatrixD& getData(){ return _data; }
 
         virtual void run() = 0;
 
     protected:
-        DTMatrixD            _model;
-        DTMatrixD            _data;
+        TMatrixD            _model;
+        TMatrixD            _data;
         size_t              _M;
         size_t              _N;
         RegType             _type;
@@ -70,7 +70,7 @@ namespace cpd
     }
 
     template <typename T, int D>
-    void Registrator<T, D>::setInputData(const DTMatrixD& model, const DTMatrixD& data)
+    void Registrator<T, D>::setInputData(const TMatrixD& model, const TMatrixD& data)
     {
         _model = model;
         _data = data;

@@ -47,8 +47,8 @@ namespace cpd
         virtual int cancel();
         virtual void run();
 
-        void updateModel(const DTMatrix& model);
-        void updateData(const DTMatrix& data);
+        void updateModel(const TMatrix& model);
+        void updateData(const TMatrix& data);
 
         inline void getModel(){ return _model; }
         inline void getData(){ return _data; }
@@ -59,8 +59,8 @@ namespace cpd
     protected:
         OpenThreads::Mutex _mutex;
 
-        DTMatrix _model;
-        DTMatrix _data;
+        TMatrix _model;
+        TMatrix _data;
 
         osg::ref_ptr<osg::Geode> _m_node;
         osg::ref_ptr<osg::Geode> _d_node;
@@ -139,13 +139,13 @@ namespace cpd
     }
 
     template <typename T, int D>
-    void RenderThread<T, D>::updateModel(const DTMatrix& model)
+    void RenderThread<T, D>::updateModel(const TMatrix& model)
     {
         _model = model;
     }
 
     template <typename T, int D>
-    void RenderThread<T, D>::updateData(const DTMatrix& data)
+    void RenderThread<T, D>::updateData(const TMatrix& data)
     {
         _data = data;
     }

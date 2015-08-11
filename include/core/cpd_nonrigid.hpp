@@ -50,7 +50,7 @@ namespace cpd
         void setBeta(T beta);
         inline NRigidParas<T, D>& getParameters(){ return _paras; }
 
-        inline DTMatrix& getG(){ return _G; }
+        inline TMatrix& getG(){ return _G; }
 
         void run();
 
@@ -69,9 +69,9 @@ namespace cpd
 
     private:
         NRigidParas<T, D>   _paras;
-        DTMatrix             _G;
-        DTMatrix             _Q;
-        DTMatrix             _S;
+        TMatrix             _G;
+        TMatrix             _Q;
+        TMatrix             _S;
     };
 }
 
@@ -108,7 +108,7 @@ namespace cpd
         T e_tol = 10 + this->_e_tol;
         T e = 0;
         
-        normalize();
+        this->normalize();
         initialization();
 
         if (this->_vision)
@@ -137,9 +137,9 @@ namespace cpd
         }
         
         correspondences();
-        updateModel();
-        denormalize();
-        RenderThread<T, D>::instance()->cancel();	
+        this->updateModel();
+        this->denormalize();
+        RenderThread<T, D>::instance()->cancel();
     }
 
     template <typename T, int D>
@@ -170,14 +170,14 @@ namespace cpd
     void CPDNRigid<T, D>::initialization()
     {
 
-        _paras._W = TMatrix::Zero(this->_M, D);
+        _paras._W = MatrixType<T, D>::Matrix::Zero(this->_M, D);
 
         T sigma_sum = this->_M*(this->_data.transpose()*this->_data).trace() + 
             this->_N*(this->_model.transpose()*this->_model).trace() - 
             2*(this->_data.colwise().sum())*(this->_model.colwise().sum()).transpose();
         _paras._sigma2 = sigma_sum / (D*this->_N*this->_M);
 
-        initTransform();
+        this->initTransform();
         constructG();
         
         if (this->_lr)
@@ -200,7 +200,7 @@ namespace cpd
             TMatrix KT1 = fgt<T, D>(this->_T, this->_data, TVector(this->_M).setOnes(), sqrt(2*_paras._sigma2), this->_fgt_eps);
             TVector a = (TVector(KT1) + c*TVector(this->_N).setOnes()).cwiseInverse();
 
-            TMatrix aX = TMatrix::Zero(this->_N, D);
+            TMatrix aX = MatrixType<T, D>::Matrix::Zero(this->_N, D);
             for (size_t i = 0; i < D; i ++)
             {
                 aX.col(i) = this->_data.col(i).cwiseProduct(a);
@@ -219,7 +219,7 @@ namespace cpd
 
         if (!this->_lr)
         {
-            TMatrix A = (this->_P1.asDiagonal()*_G + _paras._lambda*_paras._sigma2*TMatrix::Identity(this->_M, this->_M));
+            TMatrix A = (this->_P1.asDiagonal()*_G + _paras._lambda*_paras._sigma2*MatrixType<T, D>::Matrix::Identity(this->_M, this->_M));
             TMatrix B = this->_PX - this->_P1.asDiagonal() * this->_model;
             _paras._W = A.inverse() * B;
         }
@@ -282,7 +282,7 @@ namespace cpd
     template <typename T, int D>
     void CPDNRigid<T, D>::constructG()
     {
-        _G = TMatrix::Zero(this->_M, this->_M);
+        _G = MatrixType<T, D>::Matrix::Zero(this->_M, this->_M);
 
         for (size_t i = 0; i < this->_M; i ++)
         {

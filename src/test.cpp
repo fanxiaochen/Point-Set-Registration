@@ -24,10 +24,9 @@ int main()
     reg->setVarianceTolerance(1e-6);
     reg->setEnergyTolerance(1e-5);
     reg->setOutlierWeight(0.0);
-    reg->setFgtFlag(true);
-    reg->setFgtEpsilon(1e-4);
-    reg->setLowRankFlag(true);
-    reg->setKLowRank(30);
+ //   reg->setFgtFlag(true);
+ //   reg->setFgtEpsilon(1e-4);
+ //   reg->setLowRankFlag(true);
     reg->run();
 
     //std::cout << reg->getModel() << std::endl;

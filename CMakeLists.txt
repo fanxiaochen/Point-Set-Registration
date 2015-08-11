@@ -7,7 +7,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # option(FIGTREE  "use fast gaussian transformation to improve some matrix computation" OFF)
 # option(LOW_RANK "use low rank approximation to improve speed" OFF)
 
-find_package(Eigen3 REQUIRED)
+set( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
+if( NOT EIGEN3_INCLUDE_DIR )
+    message( FATAL_ERROR "Please point the environment variable EIGEN3_INCLUDE_DIR to the include directory of your Eigen3 installation." )
+endif()
+
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 find_package(OpenSceneGraph REQUIRED osgViewer osgGA)

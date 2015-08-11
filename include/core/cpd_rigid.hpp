@@ -82,7 +82,7 @@ namespace cpd
         T e_tol = 10 + this->_e_tol;
         T e = 0;
         
-        normalize();
+        this->normalize();
         initialization();
 
         if (this->_vision)
@@ -110,9 +110,9 @@ namespace cpd
         }
         
         correspondences();
-        updateModel();
-        denormalize();
-        RenderThread<T, D>::instance()->cancel();		
+        this->updateModel();
+        this->denormalize();
+        RenderThread<T, D>::instance()->cancel();
     }
 
     template <typename T, int D>
@@ -132,7 +132,7 @@ namespace cpd
             2*(this->_data.colwise().sum())*(this->_model.colwise().sum()).transpose();
         _paras._sigma2 = sigma_sum / (D*this->_N*this->_M);
 
-        initTransform();
+        this->initTransform();
     }
 
     

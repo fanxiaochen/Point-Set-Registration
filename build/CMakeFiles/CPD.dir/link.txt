@@ -1,0 +1,1 @@
+/usr/bin/c++       CMakeFiles/CPD.dir/src/test.cpp.o  -o CPD -rdynamic -losgViewer -losgGA -losg -lOpenThreads ../3rdparty/figtree/lib/figtree_release.lib 
