@@ -38,9 +38,13 @@ namespace cpd
         typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> Matrix;
     };
     
-#define     TVector             typename MatrixType<T, D>::Vector
-#define     TMatrixD            typename MatrixType<T, D>::MatrixD
-#define     TMatrix             typename MatrixType<T, D>::Matrix
+#define     DTVector            typename MatrixType<T, D>::Vector
+#define     DTMatrixD           typename MatrixType<T, D>::MatrixD
+#define     DTMatrix            typename MatrixType<T, D>::Matrix
+
+#define     TVector             MatrixType<T, D>::Vector
+#define     TMatrixD            MatrixType<T, D>::MatrixD
+#define     TMatrix             MatrixType<T, D>::Matrix
 
 }
 

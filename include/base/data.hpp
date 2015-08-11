@@ -35,7 +35,7 @@ namespace cpd
 
     template <typename T, int D>
     void getInputData(const std::string& model_file, const std::string& data_file, 
-        TMatrixD& model, TMatrixD& data)
+        DTMatrixD& model, DTMatrixD& data)
     {
         // read files and fill the model and data matrices
         std::fstream fin_m(model_file, std::ios_base::in), fin_d(data_file, std::ios_base::in);

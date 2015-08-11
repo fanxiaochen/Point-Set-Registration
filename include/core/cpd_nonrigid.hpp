@@ -50,7 +50,7 @@ namespace cpd
         void setBeta(T beta);
         inline NRigidParas<T, D>& getParameters(){ return _paras; }
 
-        inline TMatrix& getG(){ return _G; }
+        inline DTMatrix& getG(){ return _G; }
 
         void run();
 
@@ -69,9 +69,9 @@ namespace cpd
 
     private:
         NRigidParas<T, D>   _paras;
-        TMatrix             _G;
-        TMatrix             _Q;
-        TMatrix             _S;
+        DTMatrix             _G;
+        DTMatrix             _Q;
+        DTMatrix             _S;
     };
 }
 
@@ -131,7 +131,7 @@ namespace cpd
             m_step();
 
             if (this->_vision == true)
-                RenderThread<T, D>::instance()->updateModel(_T);
+                RenderThread<T, D>::instance()->updateModel(this->_T);
 
             iter_num ++;	
         }
@@ -197,7 +197,7 @@ namespace cpd
         else
         {
             T c = pow((2*M_PI*_paras._sigma2), 0.5*D) * (this->_w/(1-this->_w)) * (T(this->_M)/this->_N);
-            TMatrix KT1 = fgt<T, D>(_T, this->_data, TVector(this->_M).setOnes(), sqrt(2*_paras._sigma2), this->_fgt_eps);
+            TMatrix KT1 = fgt<T, D>(this->_T, this->_data, TVector(this->_M).setOnes(), sqrt(2*_paras._sigma2), this->_fgt_eps);
             TVector a = (TVector(KT1) + c*TVector(this->_N).setOnes()).cwiseInverse();
 
             TMatrix aX = TMatrix::Zero(this->_N, D);
@@ -207,8 +207,8 @@ namespace cpd
             }
 
             this->_PT1 = TVector(this->_N).setOnes() - c * a;
-            this->_P1 = fgt<T, D>(this->_data, _T, a, sqrt(2*_paras._sigma2), this->_fgt_eps);
-            this->_PX = fgt<T, D>(this->_data, _T, aX, sqrt(2*_paras._sigma2), this->_fgt_eps);
+            this->_P1 = fgt<T, D>(this->_data, this->_T, a, sqrt(2*_paras._sigma2), this->_fgt_eps);
+            this->_PX = fgt<T, D>(this->_data, this->_T, aX, sqrt(2*_paras._sigma2), this->_fgt_eps);
         }
     }
 
@@ -236,7 +236,7 @@ namespace cpd
         align();
 
         _paras._sigma2 = 1/(N_P*D) * ((this->_data.transpose()*this->_PT1.asDiagonal()*this->_data).trace() -
-            2*(this->_PX.transpose()*_T).trace() + (_T.transpose()*this->_P1.asDiagonal()*_T).trace());
+            2*(this->_PX.transpose()*this->_T).trace() + (this->_T.transpose()*this->_P1.asDiagonal()*this->_T).trace());
         _paras._sigma2 = abs(_paras._sigma2);
 
     }
@@ -244,7 +244,7 @@ namespace cpd
     template<typename T, int D>
     void CPDNRigid<T, D>::align()
     {
-        _T = this->_model + _G * _paras._W;
+        this->_T = this->_model + _G * _paras._W;
     }
 
     template <typename T, int D>
@@ -274,7 +274,7 @@ namespace cpd
     template <typename T, int D>
     T CPDNRigid<T, D>::computeGaussianExp(size_t m, size_t n)
     {
-        TVector vec = TVector(_T.row(m) - this->_data.row(n));
+        TVector vec = TVector(this->_T.row(m) - this->_data.row(n));
         T g_exp = exp(-vec.squaredNorm()/(2*_paras._sigma2));
         return g_exp;
     }

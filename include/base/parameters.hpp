@@ -31,8 +31,8 @@ namespace cpd
     template <typename T, int D>
     struct RigidParas  
     {
-        TMatrix _R;
-        TVector _t;
+        DTMatrix _R;
+        DTVector _t;
         T       _s;
         T       _sigma2;
     };
@@ -40,15 +40,15 @@ namespace cpd
     template <typename T, int D>
     struct AffineParas  
     {
-        TMatrix _B;
-        TVector _t;
+        DTMatrix _B;
+        DTVector _t;
         T       _sigma2;
     };
 
     template <typename T, int D>
     struct NRigidParas
     {
-        TMatrix _W;
+        DTMatrix _W;
         T       _sigma2;
         T       _lambda;
         T       _beta;
@@ -57,7 +57,7 @@ namespace cpd
     template <typename T, int D>
     struct Normal
     {
-        TVector _means;
+        DTVector _means;
         T       _scale;
     };
 }

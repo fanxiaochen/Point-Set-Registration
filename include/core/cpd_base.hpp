@@ -49,8 +49,8 @@ namespace cpd
         void normalize();
         void denormalize();
 
-        inline const TMatrix& getTransform(){ return _T; } 
-        inline const TMatrix& getCorrespondences(){ return _corres; }
+        inline const DTMatrix& getTransform(){ return _T; } 
+        inline const DTMatrix& getCorrespondences(){ return _corres; }
 
         virtual void run() = 0;
 
@@ -71,12 +71,12 @@ namespace cpd
         T           _e_tol;
         T           _w;
 
-        TMatrix     _corres;
-        TMatrix     _T;
+        DTMatrix     _corres;
+        DTMatrix     _T;
 
-        TMatrix     _P1;
-        TMatrix     _PT1;
-        TMatrix     _PX;
+        DTMatrix     _P1;
+        DTMatrix     _PT1;
+        DTMatrix     _PX;
 
         bool        _fgt;
         T           _fgt_eps;
